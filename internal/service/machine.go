@@ -59,6 +59,7 @@ func (s *Service) machineToApi(m *domain.Machine) *api.Machine {
 		AdvertisedExitNode: m.IsAdvertisedExitNode(),
 		EnabledExitNode:    m.IsAllowedExitNode(),
 		Authorized:         m.Authorized,
+		AutoGenerateName:   m.AutoGenerateName,
 	}
 }
 
@@ -478,4 +479,29 @@ func (s *Service) SetMachineKeyExpiry(ctx context.Context, req *connect.Request[
 	s.sessionManager.NotifyAll(m.TailnetID)
 
 	return connect.NewResponse(&api.SetMachineKeyExpiryResponse{}), nil
+}
+
+func (s *Service) ToggleAutoNameMachine(ctx context.Context, req *connect.Request[api.ToggleAutoNameMachineRequest]) (*connect.Response[api.ToggleAutoNameMachineResponse], error) {
+	principal := CurrentPrincipal(ctx)
+
+	m, err := s.repository.GetMachine(ctx, req.Msg.MachineId)
+	if err != nil {
+		return nil, logError(err)
+	}
+
+	if m == nil {
+		return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("machine not found"))
+	}
+
+	if !principal.IsSystemAdmin() && !principal.IsTailnetAdmin(m.TailnetID) {
+		return nil, connect.NewError(connect.CodePermissionDenied, fmt.Errorf("permission denied"))
+	}
+
+	m.AutoGenerateName = req.Msg.AutoName
+
+	if err := s.repository.SaveMachine(ctx, m); err != nil {
+		return nil, logError(err)
+	}
+
+	return connect.NewResponse(&api.ToggleAutoNameMachineResponse{}), nil
 }

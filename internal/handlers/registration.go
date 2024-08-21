@@ -84,16 +84,16 @@ func (h *RegistrationHandlers) Register(c echo.Context) error {
 			response := tailcfg.RegisterResponse{NodeKeyExpired: true}
 			return c.JSON(http.StatusOK, response)
 		}
-
-		sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
-		if m.Name != sanitizeHostname {
-			nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, m.TailnetID, sanitizeHostname)
-			if err != nil {
-				return logError(err)
+		if m.AutoGenerateName {
+			sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+			if m.Name != sanitizeHostname {
+				nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, m.TailnetID, sanitizeHostname)
+				if err != nil {
+					return logError(err)
+				}
+				m.Name = sanitizeHostname
+				m.NameIdx = nameIdx
 			}
-			m.Name = sanitizeHostname
-			m.NameIdx = nameIdx
-
 		}
 
 		advertisedTags := domain.SanitizeTags(req.Hostinfo.RequestTags)
@@ -207,10 +207,11 @@ func (h *RegistrationHandlers) authenticateMachineWithAuthKey(c echo.Context, ma
 			KeyExpiryDisabled: len(tags) != 0,
 			Authorized:        !tailnet.MachineAuthorizationEnabled || authKey.PreAuthorized,
 
-			User:      user,
-			UserID:    user.ID,
-			Tailnet:   tailnet,
-			TailnetID: tailnet.ID,
+			User:             user,
+			UserID:           user.ID,
+			Tailnet:          tailnet,
+			TailnetID:        tailnet.ID,
+			AutoGenerateName: true,
 		}
 
 		if !req.Expiry.IsZero() {
@@ -224,14 +225,16 @@ func (h *RegistrationHandlers) authenticateMachineWithAuthKey(c echo.Context, ma
 		m.IPv4 = domain.IP{Addr: ipv4}
 		m.IPv6 = domain.IP{Addr: ipv6}
 	} else {
-		sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
-		if m.Name != sanitizeHostname {
-			nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, tailnet.ID, sanitizeHostname)
-			if err != nil {
-				return logError(err)
+		if m.AutoGenerateName {
+			sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+			if m.Name != sanitizeHostname {
+				nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, tailnet.ID, sanitizeHostname)
+				if err != nil {
+					return logError(err)
+				}
+				m.Name = sanitizeHostname
+				m.NameIdx = nameIdx
 			}
-			m.Name = sanitizeHostname
-			m.NameIdx = nameIdx
 		}
 		m.NodeKey = nodeKey
 		m.Ephemeral = authKey.Ephemeral || req.Ephemeral

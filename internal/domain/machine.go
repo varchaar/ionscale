@@ -43,10 +43,11 @@ type Machine struct {
 	KeyExpiryDisabled bool
 	Authorized        bool
 
-	HostInfo     HostInfo
-	Endpoints    Endpoints
-	AllowIPs     AllowIPs
-	AutoAllowIPs AllowIPs
+	HostInfo         HostInfo
+	Endpoints        Endpoints
+	AllowIPs         AllowIPs
+	AutoAllowIPs     AllowIPs
+	AutoGenerateName bool
 
 	IPv4 IP
 	IPv6 IP

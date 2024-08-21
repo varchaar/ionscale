@@ -162,6 +162,9 @@ const (
 	// IonscaleServiceDisableExitNodeProcedure is the fully-qualified name of the IonscaleService's
 	// DisableExitNode RPC.
 	IonscaleServiceDisableExitNodeProcedure = "/ionscale.v1.IonscaleService/DisableExitNode"
+	// IonscaleServiceToggleAutoNameMachineProcedure is the fully-qualified name of the
+	// IonscaleService's ToggleAutoNameMachine RPC.
+	IonscaleServiceToggleAutoNameMachineProcedure = "/ionscale.v1.IonscaleService/ToggleAutoNameMachine"
 )
 
 // IonscaleServiceClient is a client for the ionscale.v1.IonscaleService service.
@@ -209,6 +212,7 @@ type IonscaleServiceClient interface {
 	DisableMachineRoutes(context.Context, *connect_go.Request[v1.DisableMachineRoutesRequest]) (*connect_go.Response[v1.DisableMachineRoutesResponse], error)
 	EnableExitNode(context.Context, *connect_go.Request[v1.EnableExitNodeRequest]) (*connect_go.Response[v1.EnableExitNodeResponse], error)
 	DisableExitNode(context.Context, *connect_go.Request[v1.DisableExitNodeRequest]) (*connect_go.Response[v1.DisableExitNodeResponse], error)
+	ToggleAutoNameMachine(context.Context, *connect_go.Request[v1.ToggleAutoNameMachineRequest]) (*connect_go.Response[v1.ToggleAutoNameMachineResponse], error)
 }
 
 // NewIonscaleServiceClient constructs a client for the ionscale.v1.IonscaleService service. By
@@ -436,6 +440,11 @@ func NewIonscaleServiceClient(httpClient connect_go.HTTPClient, baseURL string, 
 			baseURL+IonscaleServiceDisableExitNodeProcedure,
 			opts...,
 		),
+		toggleAutoNameMachine: connect_go.NewClient[v1.ToggleAutoNameMachineRequest, v1.ToggleAutoNameMachineResponse](
+			httpClient,
+			baseURL+IonscaleServiceToggleAutoNameMachineProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -484,6 +493,7 @@ type ionscaleServiceClient struct {
 	disableMachineRoutes        *connect_go.Client[v1.DisableMachineRoutesRequest, v1.DisableMachineRoutesResponse]
 	enableExitNode              *connect_go.Client[v1.EnableExitNodeRequest, v1.EnableExitNodeResponse]
 	disableExitNode             *connect_go.Client[v1.DisableExitNodeRequest, v1.DisableExitNodeResponse]
+	toggleAutoNameMachine       *connect_go.Client[v1.ToggleAutoNameMachineRequest, v1.ToggleAutoNameMachineResponse]
 }
 
 // GetVersion calls ionscale.v1.IonscaleService.GetVersion.
@@ -701,6 +711,11 @@ func (c *ionscaleServiceClient) DisableExitNode(ctx context.Context, req *connec
 	return c.disableExitNode.CallUnary(ctx, req)
 }
 
+// ToggleAutoNameMachine calls ionscale.v1.IonscaleService.ToggleAutoNameMachine.
+func (c *ionscaleServiceClient) ToggleAutoNameMachine(ctx context.Context, req *connect_go.Request[v1.ToggleAutoNameMachineRequest]) (*connect_go.Response[v1.ToggleAutoNameMachineResponse], error) {
+	return c.toggleAutoNameMachine.CallUnary(ctx, req)
+}
+
 // IonscaleServiceHandler is an implementation of the ionscale.v1.IonscaleService service.
 type IonscaleServiceHandler interface {
 	GetVersion(context.Context, *connect_go.Request[v1.GetVersionRequest]) (*connect_go.Response[v1.GetVersionResponse], error)
@@ -746,6 +761,7 @@ type IonscaleServiceHandler interface {
 	DisableMachineRoutes(context.Context, *connect_go.Request[v1.DisableMachineRoutesRequest]) (*connect_go.Response[v1.DisableMachineRoutesResponse], error)
 	EnableExitNode(context.Context, *connect_go.Request[v1.EnableExitNodeRequest]) (*connect_go.Response[v1.EnableExitNodeResponse], error)
 	DisableExitNode(context.Context, *connect_go.Request[v1.DisableExitNodeRequest]) (*connect_go.Response[v1.DisableExitNodeResponse], error)
+	ToggleAutoNameMachine(context.Context, *connect_go.Request[v1.ToggleAutoNameMachineRequest]) (*connect_go.Response[v1.ToggleAutoNameMachineResponse], error)
 }
 
 // NewIonscaleServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -969,6 +985,11 @@ func NewIonscaleServiceHandler(svc IonscaleServiceHandler, opts ...connect_go.Ha
 		svc.DisableExitNode,
 		opts...,
 	)
+	ionscaleServiceToggleAutoNameMachineHandler := connect_go.NewUnaryHandler(
+		IonscaleServiceToggleAutoNameMachineProcedure,
+		svc.ToggleAutoNameMachine,
+		opts...,
+	)
 	return "/ionscale.v1.IonscaleService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case IonscaleServiceGetVersionProcedure:
@@ -1057,6 +1078,8 @@ func NewIonscaleServiceHandler(svc IonscaleServiceHandler, opts ...connect_go.Ha
 			ionscaleServiceEnableExitNodeHandler.ServeHTTP(w, r)
 		case IonscaleServiceDisableExitNodeProcedure:
 			ionscaleServiceDisableExitNodeHandler.ServeHTTP(w, r)
+		case IonscaleServiceToggleAutoNameMachineProcedure:
+			ionscaleServiceToggleAutoNameMachineHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -1236,4 +1259,8 @@ func (UnimplementedIonscaleServiceHandler) EnableExitNode(context.Context, *conn
 
 func (UnimplementedIonscaleServiceHandler) DisableExitNode(context.Context, *connect_go.Request[v1.DisableExitNodeRequest]) (*connect_go.Response[v1.DisableExitNodeResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableExitNode is not implemented"))
+}
+
+func (UnimplementedIonscaleServiceHandler) ToggleAutoNameMachine(context.Context, *connect_go.Request[v1.ToggleAutoNameMachineRequest]) (*connect_go.Response[v1.ToggleAutoNameMachineResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ToggleAutoNameMachine is not implemented"))
 }

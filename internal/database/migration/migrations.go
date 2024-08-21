@@ -21,6 +21,7 @@ func Migrations() []*gormigrate.Migration {
 		m202401061400_machine_indeces(),
 		m202402120800_user_last_authenticated(),
 		m202403130830_json_to_text(),
+		m202408211711_autoname_machine_column(),
 	}
 	return migrations
 }

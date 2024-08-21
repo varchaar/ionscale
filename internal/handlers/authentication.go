@@ -493,10 +493,11 @@ func (h *AuthenticationHandlers) endMachineRegistrationFlow(c echo.Context, form
 			KeyExpiryDisabled: len(tags) != 0,
 			Authorized:        !tailnet.MachineAuthorizationEnabled || authorized,
 
-			User:      *user,
-			UserID:    user.ID,
-			Tailnet:   *tailnet,
-			TailnetID: tailnet.ID,
+			User:             *user,
+			UserID:           user.ID,
+			Tailnet:          *tailnet,
+			TailnetID:        tailnet.ID,
+			AutoGenerateName: true,
 		}
 
 		ipv4, ipv6, err := addr.SelectIP(checkIP(ctx, h.repository.CountMachinesWithIPv4))
@@ -510,14 +511,16 @@ func (h *AuthenticationHandlers) endMachineRegistrationFlow(c echo.Context, form
 		advertisedTags := domain.SanitizeTags(req.Hostinfo.RequestTags)
 		tags := append(registeredTags, advertisedTags...)
 
-		sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
-		if m.Name != sanitizeHostname {
-			nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, tailnet.ID, sanitizeHostname)
-			if err != nil {
-				return logError(err)
+		if m.AutoGenerateName {
+			sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+			if m.Name != sanitizeHostname {
+				nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, tailnet.ID, sanitizeHostname)
+				if err != nil {
+					return logError(err)
+				}
+				m.Name = sanitizeHostname
+				m.NameIdx = nameIdx
 			}
-			m.Name = sanitizeHostname
-			m.NameIdx = nameIdx
 		}
 		m.NodeKey = nodeKey
 		m.Ephemeral = ephemeral || req.Ephemeral

@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"inet.af/netaddr"
 	"os"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 )
@@ -34,6 +35,7 @@ func machineCommands() *cobra.Command {
 	command.AddCommand(disableMachineKeyExpiryCommand())
 	command.AddCommand(authorizeMachineCommand())
 	command.AddCommand(renameMachineCommand())
+	command.AddCommand(setAutoNameMachineCommand())
 
 	return command
 }
@@ -90,6 +92,7 @@ func getMachineCommand() *cobra.Command {
 		fmt.Fprintf(w, "%s\t%s\n", "Tailscale IPv6", m.Ipv6)
 		fmt.Fprintf(w, "%s\t%s\n", "Last seen", lastSeen)
 		fmt.Fprintf(w, "%s\t%v\n", "Ephemeral", m.Ephemeral)
+		fmt.Fprintf(w, "%s\t%v\n", "Auto generate Hostname", m.AutoGenerateName)
 		if !m.Authorized {
 			fmt.Fprintf(w, "%s\t%v\n", "Authorized", m.Authorized)
 		}
@@ -477,6 +480,38 @@ func renameMachineCommand() *cobra.Command {
 		}
 
 		fmt.Println("Machine renamed to", name)
+
+		return nil
+	}
+
+	return command
+}
+
+func setAutoNameMachineCommand() *cobra.Command {
+	command, tc := prepareCommand(false, &cobra.Command{
+		Use:   "set-generate-auto-name <true or false>",
+		Short: "Toggle auto name generation on registration",
+		Args:  cobra.ExactArgs(1),
+	})
+
+	var machineID uint64
+
+	command.Flags().Uint64Var(&machineID, "machine-id", 0, "Machine ID")
+
+	_ = command.MarkFlagRequired("machine-id")
+
+	command.RunE = func(cmd *cobra.Command, args []string) error {
+		autoName, err := strconv.ParseBool(args[0])
+		if err != nil {
+			return err
+		}
+
+		req := api.ToggleAutoNameMachineRequest{MachineId: machineID, AutoName: autoName}
+		if _, err := tc.Client().ToggleAutoNameMachine(cmd.Context(), connect.NewRequest(&req)); err != nil {
+			return err
+		}
+
+		fmt.Println("Set auto name generation to", autoName)
 
 		return nil
 	}

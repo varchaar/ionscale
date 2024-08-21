@@ -55,6 +55,13 @@ message RenameMachineRequest {
 
 message RenameMachineResponse {}
 
+message ToggleAutoNameMachineRequest {
+  uint64 machine_id = 1;
+  bool auto_name = 2;
+}
+
+message ToggleAutoNameMachineResponse {}
+
 message Machine {
   uint64 id = 1;
   string name = 2;
@@ -77,6 +84,7 @@ message Machine {
   bool advertised_exit_node = 19;
   bool enabled_exit_node = 20;
   bool authorized = 21;
+  bool auto_generate_name = 22;
 }
 
 message ClientConnectivity {
