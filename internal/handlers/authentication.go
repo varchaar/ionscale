@@ -9,6 +9,7 @@ import (
 	tpl "github.com/jsiebens/ionscale/internal/templates"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/mr-tron/base58"
+	"go.uber.org/zap"
 	"net/http"
 	"tailscale.com/tailcfg"
 	"time"
@@ -589,11 +590,13 @@ func (h *AuthenticationHandlers) listAvailableTailnets(ctx context.Context, u *a
 
 func (h *AuthenticationHandlers) exchangeUser(code string) (*auth.User, error) {
 	redirectUrl := h.config.CreateUrl("/a/callback")
+	logger := zap.L().Named("derp").Sugar()
 
 	user, err := h.authProvider.Exchange(redirectUrl, code)
 	if err != nil {
 		return nil, err
 	}
+	logger.Debugw("auth", "user", user)
 
 	return user, nil
 }
