@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/bufbuild/connect-go"
+	"connectrpc.com/connect"
 	"github.com/hashicorp/go-bexpr/grammar"
 	"github.com/hashicorp/go-multierror"
 	"github.com/jsiebens/ionscale/internal/auth"

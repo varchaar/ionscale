@@ -5,9 +5,9 @@
 package ionscalev1connect
 
 import (
+	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	connect_go "github.com/bufbuild/connect-go"
 	v1 "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1"
 	http "net/http"
 	strings "strings"
@@ -18,7 +18,7 @@ import (
 // generated with a version of connect newer than the one compiled into your binary. You can fix the
 // problem by either regenerating this code with an older version of connect or updating the connect
 // version compiled into your binary.
-const _ = connect_go.IsAtLeastVersion0_1_0
+const _ = connect.IsAtLeastVersion1_13_0
 
 const (
 	// IonscaleServiceName is the fully-qualified name of the IonscaleService service.
@@ -167,52 +167,101 @@ const (
 	IonscaleServiceToggleAutoNameMachineProcedure = "/ionscale.v1.IonscaleService/ToggleAutoNameMachine"
 )
 
+// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
+var (
+	ionscaleServiceServiceDescriptor                           = v1.File_ionscale_v1_ionscale_proto.Services().ByName("IonscaleService")
+	ionscaleServiceGetVersionMethodDescriptor                  = ionscaleServiceServiceDescriptor.Methods().ByName("GetVersion")
+	ionscaleServiceAuthenticateMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("Authenticate")
+	ionscaleServiceGetDefaultDERPMapMethodDescriptor           = ionscaleServiceServiceDescriptor.Methods().ByName("GetDefaultDERPMap")
+	ionscaleServiceCreateTailnetMethodDescriptor               = ionscaleServiceServiceDescriptor.Methods().ByName("CreateTailnet")
+	ionscaleServiceUpdateTailnetMethodDescriptor               = ionscaleServiceServiceDescriptor.Methods().ByName("UpdateTailnet")
+	ionscaleServiceGetTailnetMethodDescriptor                  = ionscaleServiceServiceDescriptor.Methods().ByName("GetTailnet")
+	ionscaleServiceListTailnetsMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("ListTailnets")
+	ionscaleServiceDeleteTailnetMethodDescriptor               = ionscaleServiceServiceDescriptor.Methods().ByName("DeleteTailnet")
+	ionscaleServiceGetDERPMapMethodDescriptor                  = ionscaleServiceServiceDescriptor.Methods().ByName("GetDERPMap")
+	ionscaleServiceSetDERPMapMethodDescriptor                  = ionscaleServiceServiceDescriptor.Methods().ByName("SetDERPMap")
+	ionscaleServiceResetDERPMapMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("ResetDERPMap")
+	ionscaleServiceEnableFileSharingMethodDescriptor           = ionscaleServiceServiceDescriptor.Methods().ByName("EnableFileSharing")
+	ionscaleServiceDisableFileSharingMethodDescriptor          = ionscaleServiceServiceDescriptor.Methods().ByName("DisableFileSharing")
+	ionscaleServiceEnableServiceCollectionMethodDescriptor     = ionscaleServiceServiceDescriptor.Methods().ByName("EnableServiceCollection")
+	ionscaleServiceDisableServiceCollectionMethodDescriptor    = ionscaleServiceServiceDescriptor.Methods().ByName("DisableServiceCollection")
+	ionscaleServiceEnableSSHMethodDescriptor                   = ionscaleServiceServiceDescriptor.Methods().ByName("EnableSSH")
+	ionscaleServiceDisableSSHMethodDescriptor                  = ionscaleServiceServiceDescriptor.Methods().ByName("DisableSSH")
+	ionscaleServiceEnableMachineAuthorizationMethodDescriptor  = ionscaleServiceServiceDescriptor.Methods().ByName("EnableMachineAuthorization")
+	ionscaleServiceDisableMachineAuthorizationMethodDescriptor = ionscaleServiceServiceDescriptor.Methods().ByName("DisableMachineAuthorization")
+	ionscaleServiceGetDNSConfigMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("GetDNSConfig")
+	ionscaleServiceSetDNSConfigMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("SetDNSConfig")
+	ionscaleServiceGetIAMPolicyMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("GetIAMPolicy")
+	ionscaleServiceSetIAMPolicyMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("SetIAMPolicy")
+	ionscaleServiceGetACLPolicyMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("GetACLPolicy")
+	ionscaleServiceSetACLPolicyMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("SetACLPolicy")
+	ionscaleServiceGetAuthKeyMethodDescriptor                  = ionscaleServiceServiceDescriptor.Methods().ByName("GetAuthKey")
+	ionscaleServiceCreateAuthKeyMethodDescriptor               = ionscaleServiceServiceDescriptor.Methods().ByName("CreateAuthKey")
+	ionscaleServiceDeleteAuthKeyMethodDescriptor               = ionscaleServiceServiceDescriptor.Methods().ByName("DeleteAuthKey")
+	ionscaleServiceListAuthKeysMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("ListAuthKeys")
+	ionscaleServiceListUsersMethodDescriptor                   = ionscaleServiceServiceDescriptor.Methods().ByName("ListUsers")
+	ionscaleServiceDeleteUserMethodDescriptor                  = ionscaleServiceServiceDescriptor.Methods().ByName("DeleteUser")
+	ionscaleServiceGetMachineMethodDescriptor                  = ionscaleServiceServiceDescriptor.Methods().ByName("GetMachine")
+	ionscaleServiceListMachinesMethodDescriptor                = ionscaleServiceServiceDescriptor.Methods().ByName("ListMachines")
+	ionscaleServiceAuthorizeMachineMethodDescriptor            = ionscaleServiceServiceDescriptor.Methods().ByName("AuthorizeMachine")
+	ionscaleServiceRenameMachineMethodDescriptor               = ionscaleServiceServiceDescriptor.Methods().ByName("RenameMachine")
+	ionscaleServiceExpireMachineMethodDescriptor               = ionscaleServiceServiceDescriptor.Methods().ByName("ExpireMachine")
+	ionscaleServiceDeleteMachineMethodDescriptor               = ionscaleServiceServiceDescriptor.Methods().ByName("DeleteMachine")
+	ionscaleServiceSetMachineKeyExpiryMethodDescriptor         = ionscaleServiceServiceDescriptor.Methods().ByName("SetMachineKeyExpiry")
+	ionscaleServiceGetMachineRoutesMethodDescriptor            = ionscaleServiceServiceDescriptor.Methods().ByName("GetMachineRoutes")
+	ionscaleServiceEnableMachineRoutesMethodDescriptor         = ionscaleServiceServiceDescriptor.Methods().ByName("EnableMachineRoutes")
+	ionscaleServiceDisableMachineRoutesMethodDescriptor        = ionscaleServiceServiceDescriptor.Methods().ByName("DisableMachineRoutes")
+	ionscaleServiceEnableExitNodeMethodDescriptor              = ionscaleServiceServiceDescriptor.Methods().ByName("EnableExitNode")
+	ionscaleServiceDisableExitNodeMethodDescriptor             = ionscaleServiceServiceDescriptor.Methods().ByName("DisableExitNode")
+	ionscaleServiceToggleAutoNameMachineMethodDescriptor       = ionscaleServiceServiceDescriptor.Methods().ByName("ToggleAutoNameMachine")
+)
+
 // IonscaleServiceClient is a client for the ionscale.v1.IonscaleService service.
 type IonscaleServiceClient interface {
-	GetVersion(context.Context, *connect_go.Request[v1.GetVersionRequest]) (*connect_go.Response[v1.GetVersionResponse], error)
-	Authenticate(context.Context, *connect_go.Request[v1.AuthenticateRequest]) (*connect_go.ServerStreamForClient[v1.AuthenticateResponse], error)
-	GetDefaultDERPMap(context.Context, *connect_go.Request[v1.GetDefaultDERPMapRequest]) (*connect_go.Response[v1.GetDefaultDERPMapResponse], error)
-	CreateTailnet(context.Context, *connect_go.Request[v1.CreateTailnetRequest]) (*connect_go.Response[v1.CreateTailnetResponse], error)
-	UpdateTailnet(context.Context, *connect_go.Request[v1.UpdateTailnetRequest]) (*connect_go.Response[v1.UpdateTailnetResponse], error)
-	GetTailnet(context.Context, *connect_go.Request[v1.GetTailnetRequest]) (*connect_go.Response[v1.GetTailnetResponse], error)
-	ListTailnets(context.Context, *connect_go.Request[v1.ListTailnetsRequest]) (*connect_go.Response[v1.ListTailnetsResponse], error)
-	DeleteTailnet(context.Context, *connect_go.Request[v1.DeleteTailnetRequest]) (*connect_go.Response[v1.DeleteTailnetResponse], error)
-	GetDERPMap(context.Context, *connect_go.Request[v1.GetDERPMapRequest]) (*connect_go.Response[v1.GetDERPMapResponse], error)
-	SetDERPMap(context.Context, *connect_go.Request[v1.SetDERPMapRequest]) (*connect_go.Response[v1.SetDERPMapResponse], error)
-	ResetDERPMap(context.Context, *connect_go.Request[v1.ResetDERPMapRequest]) (*connect_go.Response[v1.ResetDERPMapResponse], error)
-	EnableFileSharing(context.Context, *connect_go.Request[v1.EnableFileSharingRequest]) (*connect_go.Response[v1.EnableFileSharingResponse], error)
-	DisableFileSharing(context.Context, *connect_go.Request[v1.DisableFileSharingRequest]) (*connect_go.Response[v1.DisableFileSharingResponse], error)
-	EnableServiceCollection(context.Context, *connect_go.Request[v1.EnableServiceCollectionRequest]) (*connect_go.Response[v1.EnableServiceCollectionResponse], error)
-	DisableServiceCollection(context.Context, *connect_go.Request[v1.DisableServiceCollectionRequest]) (*connect_go.Response[v1.DisableServiceCollectionResponse], error)
-	EnableSSH(context.Context, *connect_go.Request[v1.EnableSSHRequest]) (*connect_go.Response[v1.EnableSSHResponse], error)
-	DisableSSH(context.Context, *connect_go.Request[v1.DisableSSHRequest]) (*connect_go.Response[v1.DisableSSHResponse], error)
-	EnableMachineAuthorization(context.Context, *connect_go.Request[v1.EnableMachineAuthorizationRequest]) (*connect_go.Response[v1.EnableMachineAuthorizationResponse], error)
-	DisableMachineAuthorization(context.Context, *connect_go.Request[v1.DisableMachineAuthorizationRequest]) (*connect_go.Response[v1.DisableMachineAuthorizationResponse], error)
-	GetDNSConfig(context.Context, *connect_go.Request[v1.GetDNSConfigRequest]) (*connect_go.Response[v1.GetDNSConfigResponse], error)
-	SetDNSConfig(context.Context, *connect_go.Request[v1.SetDNSConfigRequest]) (*connect_go.Response[v1.SetDNSConfigResponse], error)
-	GetIAMPolicy(context.Context, *connect_go.Request[v1.GetIAMPolicyRequest]) (*connect_go.Response[v1.GetIAMPolicyResponse], error)
-	SetIAMPolicy(context.Context, *connect_go.Request[v1.SetIAMPolicyRequest]) (*connect_go.Response[v1.SetIAMPolicyResponse], error)
-	GetACLPolicy(context.Context, *connect_go.Request[v1.GetACLPolicyRequest]) (*connect_go.Response[v1.GetACLPolicyResponse], error)
-	SetACLPolicy(context.Context, *connect_go.Request[v1.SetACLPolicyRequest]) (*connect_go.Response[v1.SetACLPolicyResponse], error)
-	GetAuthKey(context.Context, *connect_go.Request[v1.GetAuthKeyRequest]) (*connect_go.Response[v1.GetAuthKeyResponse], error)
-	CreateAuthKey(context.Context, *connect_go.Request[v1.CreateAuthKeyRequest]) (*connect_go.Response[v1.CreateAuthKeyResponse], error)
-	DeleteAuthKey(context.Context, *connect_go.Request[v1.DeleteAuthKeyRequest]) (*connect_go.Response[v1.DeleteAuthKeyResponse], error)
-	ListAuthKeys(context.Context, *connect_go.Request[v1.ListAuthKeysRequest]) (*connect_go.Response[v1.ListAuthKeysResponse], error)
-	ListUsers(context.Context, *connect_go.Request[v1.ListUsersRequest]) (*connect_go.Response[v1.ListUsersResponse], error)
-	DeleteUser(context.Context, *connect_go.Request[v1.DeleteUserRequest]) (*connect_go.Response[v1.DeleteUserResponse], error)
-	GetMachine(context.Context, *connect_go.Request[v1.GetMachineRequest]) (*connect_go.Response[v1.GetMachineResponse], error)
-	ListMachines(context.Context, *connect_go.Request[v1.ListMachinesRequest]) (*connect_go.Response[v1.ListMachinesResponse], error)
-	AuthorizeMachine(context.Context, *connect_go.Request[v1.AuthorizeMachineRequest]) (*connect_go.Response[v1.AuthorizeMachineResponse], error)
-	RenameMachine(context.Context, *connect_go.Request[v1.RenameMachineRequest]) (*connect_go.Response[v1.RenameMachineResponse], error)
-	ExpireMachine(context.Context, *connect_go.Request[v1.ExpireMachineRequest]) (*connect_go.Response[v1.ExpireMachineResponse], error)
-	DeleteMachine(context.Context, *connect_go.Request[v1.DeleteMachineRequest]) (*connect_go.Response[v1.DeleteMachineResponse], error)
-	SetMachineKeyExpiry(context.Context, *connect_go.Request[v1.SetMachineKeyExpiryRequest]) (*connect_go.Response[v1.SetMachineKeyExpiryResponse], error)
-	GetMachineRoutes(context.Context, *connect_go.Request[v1.GetMachineRoutesRequest]) (*connect_go.Response[v1.GetMachineRoutesResponse], error)
-	EnableMachineRoutes(context.Context, *connect_go.Request[v1.EnableMachineRoutesRequest]) (*connect_go.Response[v1.EnableMachineRoutesResponse], error)
-	DisableMachineRoutes(context.Context, *connect_go.Request[v1.DisableMachineRoutesRequest]) (*connect_go.Response[v1.DisableMachineRoutesResponse], error)
-	EnableExitNode(context.Context, *connect_go.Request[v1.EnableExitNodeRequest]) (*connect_go.Response[v1.EnableExitNodeResponse], error)
-	DisableExitNode(context.Context, *connect_go.Request[v1.DisableExitNodeRequest]) (*connect_go.Response[v1.DisableExitNodeResponse], error)
-	ToggleAutoNameMachine(context.Context, *connect_go.Request[v1.ToggleAutoNameMachineRequest]) (*connect_go.Response[v1.ToggleAutoNameMachineResponse], error)
+	GetVersion(context.Context, *connect.Request[v1.GetVersionRequest]) (*connect.Response[v1.GetVersionResponse], error)
+	Authenticate(context.Context, *connect.Request[v1.AuthenticateRequest]) (*connect.ServerStreamForClient[v1.AuthenticateResponse], error)
+	GetDefaultDERPMap(context.Context, *connect.Request[v1.GetDefaultDERPMapRequest]) (*connect.Response[v1.GetDefaultDERPMapResponse], error)
+	CreateTailnet(context.Context, *connect.Request[v1.CreateTailnetRequest]) (*connect.Response[v1.CreateTailnetResponse], error)
+	UpdateTailnet(context.Context, *connect.Request[v1.UpdateTailnetRequest]) (*connect.Response[v1.UpdateTailnetResponse], error)
+	GetTailnet(context.Context, *connect.Request[v1.GetTailnetRequest]) (*connect.Response[v1.GetTailnetResponse], error)
+	ListTailnets(context.Context, *connect.Request[v1.ListTailnetsRequest]) (*connect.Response[v1.ListTailnetsResponse], error)
+	DeleteTailnet(context.Context, *connect.Request[v1.DeleteTailnetRequest]) (*connect.Response[v1.DeleteTailnetResponse], error)
+	GetDERPMap(context.Context, *connect.Request[v1.GetDERPMapRequest]) (*connect.Response[v1.GetDERPMapResponse], error)
+	SetDERPMap(context.Context, *connect.Request[v1.SetDERPMapRequest]) (*connect.Response[v1.SetDERPMapResponse], error)
+	ResetDERPMap(context.Context, *connect.Request[v1.ResetDERPMapRequest]) (*connect.Response[v1.ResetDERPMapResponse], error)
+	EnableFileSharing(context.Context, *connect.Request[v1.EnableFileSharingRequest]) (*connect.Response[v1.EnableFileSharingResponse], error)
+	DisableFileSharing(context.Context, *connect.Request[v1.DisableFileSharingRequest]) (*connect.Response[v1.DisableFileSharingResponse], error)
+	EnableServiceCollection(context.Context, *connect.Request[v1.EnableServiceCollectionRequest]) (*connect.Response[v1.EnableServiceCollectionResponse], error)
+	DisableServiceCollection(context.Context, *connect.Request[v1.DisableServiceCollectionRequest]) (*connect.Response[v1.DisableServiceCollectionResponse], error)
+	EnableSSH(context.Context, *connect.Request[v1.EnableSSHRequest]) (*connect.Response[v1.EnableSSHResponse], error)
+	DisableSSH(context.Context, *connect.Request[v1.DisableSSHRequest]) (*connect.Response[v1.DisableSSHResponse], error)
+	EnableMachineAuthorization(context.Context, *connect.Request[v1.EnableMachineAuthorizationRequest]) (*connect.Response[v1.EnableMachineAuthorizationResponse], error)
+	DisableMachineAuthorization(context.Context, *connect.Request[v1.DisableMachineAuthorizationRequest]) (*connect.Response[v1.DisableMachineAuthorizationResponse], error)
+	GetDNSConfig(context.Context, *connect.Request[v1.GetDNSConfigRequest]) (*connect.Response[v1.GetDNSConfigResponse], error)
+	SetDNSConfig(context.Context, *connect.Request[v1.SetDNSConfigRequest]) (*connect.Response[v1.SetDNSConfigResponse], error)
+	GetIAMPolicy(context.Context, *connect.Request[v1.GetIAMPolicyRequest]) (*connect.Response[v1.GetIAMPolicyResponse], error)
+	SetIAMPolicy(context.Context, *connect.Request[v1.SetIAMPolicyRequest]) (*connect.Response[v1.SetIAMPolicyResponse], error)
+	GetACLPolicy(context.Context, *connect.Request[v1.GetACLPolicyRequest]) (*connect.Response[v1.GetACLPolicyResponse], error)
+	SetACLPolicy(context.Context, *connect.Request[v1.SetACLPolicyRequest]) (*connect.Response[v1.SetACLPolicyResponse], error)
+	GetAuthKey(context.Context, *connect.Request[v1.GetAuthKeyRequest]) (*connect.Response[v1.GetAuthKeyResponse], error)
+	CreateAuthKey(context.Context, *connect.Request[v1.CreateAuthKeyRequest]) (*connect.Response[v1.CreateAuthKeyResponse], error)
+	DeleteAuthKey(context.Context, *connect.Request[v1.DeleteAuthKeyRequest]) (*connect.Response[v1.DeleteAuthKeyResponse], error)
+	ListAuthKeys(context.Context, *connect.Request[v1.ListAuthKeysRequest]) (*connect.Response[v1.ListAuthKeysResponse], error)
+	ListUsers(context.Context, *connect.Request[v1.ListUsersRequest]) (*connect.Response[v1.ListUsersResponse], error)
+	DeleteUser(context.Context, *connect.Request[v1.DeleteUserRequest]) (*connect.Response[v1.DeleteUserResponse], error)
+	GetMachine(context.Context, *connect.Request[v1.GetMachineRequest]) (*connect.Response[v1.GetMachineResponse], error)
+	ListMachines(context.Context, *connect.Request[v1.ListMachinesRequest]) (*connect.Response[v1.ListMachinesResponse], error)
+	AuthorizeMachine(context.Context, *connect.Request[v1.AuthorizeMachineRequest]) (*connect.Response[v1.AuthorizeMachineResponse], error)
+	RenameMachine(context.Context, *connect.Request[v1.RenameMachineRequest]) (*connect.Response[v1.RenameMachineResponse], error)
+	ExpireMachine(context.Context, *connect.Request[v1.ExpireMachineRequest]) (*connect.Response[v1.ExpireMachineResponse], error)
+	DeleteMachine(context.Context, *connect.Request[v1.DeleteMachineRequest]) (*connect.Response[v1.DeleteMachineResponse], error)
+	SetMachineKeyExpiry(context.Context, *connect.Request[v1.SetMachineKeyExpiryRequest]) (*connect.Response[v1.SetMachineKeyExpiryResponse], error)
+	GetMachineRoutes(context.Context, *connect.Request[v1.GetMachineRoutesRequest]) (*connect.Response[v1.GetMachineRoutesResponse], error)
+	EnableMachineRoutes(context.Context, *connect.Request[v1.EnableMachineRoutesRequest]) (*connect.Response[v1.EnableMachineRoutesResponse], error)
+	DisableMachineRoutes(context.Context, *connect.Request[v1.DisableMachineRoutesRequest]) (*connect.Response[v1.DisableMachineRoutesResponse], error)
+	EnableExitNode(context.Context, *connect.Request[v1.EnableExitNodeRequest]) (*connect.Response[v1.EnableExitNodeResponse], error)
+	DisableExitNode(context.Context, *connect.Request[v1.DisableExitNodeRequest]) (*connect.Response[v1.DisableExitNodeResponse], error)
+	ToggleAutoNameMachine(context.Context, *connect.Request[v1.ToggleAutoNameMachineRequest]) (*connect.Response[v1.ToggleAutoNameMachineResponse], error)
 }
 
 // NewIonscaleServiceClient constructs a client for the ionscale.v1.IonscaleService service. By
@@ -222,546 +271,590 @@ type IonscaleServiceClient interface {
 //
 // The URL supplied here should be the base URL for the Connect or gRPC server (for example,
 // http://api.acme.com or https://acme.com/grpc).
-func NewIonscaleServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) IonscaleServiceClient {
+func NewIonscaleServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) IonscaleServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &ionscaleServiceClient{
-		getVersion: connect_go.NewClient[v1.GetVersionRequest, v1.GetVersionResponse](
+		getVersion: connect.NewClient[v1.GetVersionRequest, v1.GetVersionResponse](
 			httpClient,
 			baseURL+IonscaleServiceGetVersionProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceGetVersionMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		authenticate: connect_go.NewClient[v1.AuthenticateRequest, v1.AuthenticateResponse](
+		authenticate: connect.NewClient[v1.AuthenticateRequest, v1.AuthenticateResponse](
 			httpClient,
 			baseURL+IonscaleServiceAuthenticateProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceAuthenticateMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		getDefaultDERPMap: connect_go.NewClient[v1.GetDefaultDERPMapRequest, v1.GetDefaultDERPMapResponse](
+		getDefaultDERPMap: connect.NewClient[v1.GetDefaultDERPMapRequest, v1.GetDefaultDERPMapResponse](
 			httpClient,
 			baseURL+IonscaleServiceGetDefaultDERPMapProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceGetDefaultDERPMapMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		createTailnet: connect_go.NewClient[v1.CreateTailnetRequest, v1.CreateTailnetResponse](
+		createTailnet: connect.NewClient[v1.CreateTailnetRequest, v1.CreateTailnetResponse](
 			httpClient,
 			baseURL+IonscaleServiceCreateTailnetProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceCreateTailnetMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		updateTailnet: connect_go.NewClient[v1.UpdateTailnetRequest, v1.UpdateTailnetResponse](
+		updateTailnet: connect.NewClient[v1.UpdateTailnetRequest, v1.UpdateTailnetResponse](
 			httpClient,
 			baseURL+IonscaleServiceUpdateTailnetProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceUpdateTailnetMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		getTailnet: connect_go.NewClient[v1.GetTailnetRequest, v1.GetTailnetResponse](
+		getTailnet: connect.NewClient[v1.GetTailnetRequest, v1.GetTailnetResponse](
 			httpClient,
 			baseURL+IonscaleServiceGetTailnetProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceGetTailnetMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		listTailnets: connect_go.NewClient[v1.ListTailnetsRequest, v1.ListTailnetsResponse](
+		listTailnets: connect.NewClient[v1.ListTailnetsRequest, v1.ListTailnetsResponse](
 			httpClient,
 			baseURL+IonscaleServiceListTailnetsProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceListTailnetsMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		deleteTailnet: connect_go.NewClient[v1.DeleteTailnetRequest, v1.DeleteTailnetResponse](
+		deleteTailnet: connect.NewClient[v1.DeleteTailnetRequest, v1.DeleteTailnetResponse](
 			httpClient,
 			baseURL+IonscaleServiceDeleteTailnetProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceDeleteTailnetMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		getDERPMap: connect_go.NewClient[v1.GetDERPMapRequest, v1.GetDERPMapResponse](
+		getDERPMap: connect.NewClient[v1.GetDERPMapRequest, v1.GetDERPMapResponse](
 			httpClient,
 			baseURL+IonscaleServiceGetDERPMapProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceGetDERPMapMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		setDERPMap: connect_go.NewClient[v1.SetDERPMapRequest, v1.SetDERPMapResponse](
+		setDERPMap: connect.NewClient[v1.SetDERPMapRequest, v1.SetDERPMapResponse](
 			httpClient,
 			baseURL+IonscaleServiceSetDERPMapProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceSetDERPMapMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		resetDERPMap: connect_go.NewClient[v1.ResetDERPMapRequest, v1.ResetDERPMapResponse](
+		resetDERPMap: connect.NewClient[v1.ResetDERPMapRequest, v1.ResetDERPMapResponse](
 			httpClient,
 			baseURL+IonscaleServiceResetDERPMapProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceResetDERPMapMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		enableFileSharing: connect_go.NewClient[v1.EnableFileSharingRequest, v1.EnableFileSharingResponse](
+		enableFileSharing: connect.NewClient[v1.EnableFileSharingRequest, v1.EnableFileSharingResponse](
 			httpClient,
 			baseURL+IonscaleServiceEnableFileSharingProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceEnableFileSharingMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		disableFileSharing: connect_go.NewClient[v1.DisableFileSharingRequest, v1.DisableFileSharingResponse](
+		disableFileSharing: connect.NewClient[v1.DisableFileSharingRequest, v1.DisableFileSharingResponse](
 			httpClient,
 			baseURL+IonscaleServiceDisableFileSharingProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceDisableFileSharingMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		enableServiceCollection: connect_go.NewClient[v1.EnableServiceCollectionRequest, v1.EnableServiceCollectionResponse](
+		enableServiceCollection: connect.NewClient[v1.EnableServiceCollectionRequest, v1.EnableServiceCollectionResponse](
 			httpClient,
 			baseURL+IonscaleServiceEnableServiceCollectionProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceEnableServiceCollectionMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		disableServiceCollection: connect_go.NewClient[v1.DisableServiceCollectionRequest, v1.DisableServiceCollectionResponse](
+		disableServiceCollection: connect.NewClient[v1.DisableServiceCollectionRequest, v1.DisableServiceCollectionResponse](
 			httpClient,
 			baseURL+IonscaleServiceDisableServiceCollectionProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceDisableServiceCollectionMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		enableSSH: connect_go.NewClient[v1.EnableSSHRequest, v1.EnableSSHResponse](
+		enableSSH: connect.NewClient[v1.EnableSSHRequest, v1.EnableSSHResponse](
 			httpClient,
 			baseURL+IonscaleServiceEnableSSHProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceEnableSSHMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		disableSSH: connect_go.NewClient[v1.DisableSSHRequest, v1.DisableSSHResponse](
+		disableSSH: connect.NewClient[v1.DisableSSHRequest, v1.DisableSSHResponse](
 			httpClient,
 			baseURL+IonscaleServiceDisableSSHProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceDisableSSHMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		enableMachineAuthorization: connect_go.NewClient[v1.EnableMachineAuthorizationRequest, v1.EnableMachineAuthorizationResponse](
+		enableMachineAuthorization: connect.NewClient[v1.EnableMachineAuthorizationRequest, v1.EnableMachineAuthorizationResponse](
 			httpClient,
 			baseURL+IonscaleServiceEnableMachineAuthorizationProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceEnableMachineAuthorizationMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		disableMachineAuthorization: connect_go.NewClient[v1.DisableMachineAuthorizationRequest, v1.DisableMachineAuthorizationResponse](
+		disableMachineAuthorization: connect.NewClient[v1.DisableMachineAuthorizationRequest, v1.DisableMachineAuthorizationResponse](
 			httpClient,
 			baseURL+IonscaleServiceDisableMachineAuthorizationProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceDisableMachineAuthorizationMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		getDNSConfig: connect_go.NewClient[v1.GetDNSConfigRequest, v1.GetDNSConfigResponse](
+		getDNSConfig: connect.NewClient[v1.GetDNSConfigRequest, v1.GetDNSConfigResponse](
 			httpClient,
 			baseURL+IonscaleServiceGetDNSConfigProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceGetDNSConfigMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		setDNSConfig: connect_go.NewClient[v1.SetDNSConfigRequest, v1.SetDNSConfigResponse](
+		setDNSConfig: connect.NewClient[v1.SetDNSConfigRequest, v1.SetDNSConfigResponse](
 			httpClient,
 			baseURL+IonscaleServiceSetDNSConfigProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceSetDNSConfigMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		getIAMPolicy: connect_go.NewClient[v1.GetIAMPolicyRequest, v1.GetIAMPolicyResponse](
+		getIAMPolicy: connect.NewClient[v1.GetIAMPolicyRequest, v1.GetIAMPolicyResponse](
 			httpClient,
 			baseURL+IonscaleServiceGetIAMPolicyProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceGetIAMPolicyMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		setIAMPolicy: connect_go.NewClient[v1.SetIAMPolicyRequest, v1.SetIAMPolicyResponse](
+		setIAMPolicy: connect.NewClient[v1.SetIAMPolicyRequest, v1.SetIAMPolicyResponse](
 			httpClient,
 			baseURL+IonscaleServiceSetIAMPolicyProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceSetIAMPolicyMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		getACLPolicy: connect_go.NewClient[v1.GetACLPolicyRequest, v1.GetACLPolicyResponse](
+		getACLPolicy: connect.NewClient[v1.GetACLPolicyRequest, v1.GetACLPolicyResponse](
 			httpClient,
 			baseURL+IonscaleServiceGetACLPolicyProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceGetACLPolicyMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		setACLPolicy: connect_go.NewClient[v1.SetACLPolicyRequest, v1.SetACLPolicyResponse](
+		setACLPolicy: connect.NewClient[v1.SetACLPolicyRequest, v1.SetACLPolicyResponse](
 			httpClient,
 			baseURL+IonscaleServiceSetACLPolicyProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceSetACLPolicyMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		getAuthKey: connect_go.NewClient[v1.GetAuthKeyRequest, v1.GetAuthKeyResponse](
+		getAuthKey: connect.NewClient[v1.GetAuthKeyRequest, v1.GetAuthKeyResponse](
 			httpClient,
 			baseURL+IonscaleServiceGetAuthKeyProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceGetAuthKeyMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		createAuthKey: connect_go.NewClient[v1.CreateAuthKeyRequest, v1.CreateAuthKeyResponse](
+		createAuthKey: connect.NewClient[v1.CreateAuthKeyRequest, v1.CreateAuthKeyResponse](
 			httpClient,
 			baseURL+IonscaleServiceCreateAuthKeyProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceCreateAuthKeyMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		deleteAuthKey: connect_go.NewClient[v1.DeleteAuthKeyRequest, v1.DeleteAuthKeyResponse](
+		deleteAuthKey: connect.NewClient[v1.DeleteAuthKeyRequest, v1.DeleteAuthKeyResponse](
 			httpClient,
 			baseURL+IonscaleServiceDeleteAuthKeyProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceDeleteAuthKeyMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		listAuthKeys: connect_go.NewClient[v1.ListAuthKeysRequest, v1.ListAuthKeysResponse](
+		listAuthKeys: connect.NewClient[v1.ListAuthKeysRequest, v1.ListAuthKeysResponse](
 			httpClient,
 			baseURL+IonscaleServiceListAuthKeysProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceListAuthKeysMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		listUsers: connect_go.NewClient[v1.ListUsersRequest, v1.ListUsersResponse](
+		listUsers: connect.NewClient[v1.ListUsersRequest, v1.ListUsersResponse](
 			httpClient,
 			baseURL+IonscaleServiceListUsersProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceListUsersMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		deleteUser: connect_go.NewClient[v1.DeleteUserRequest, v1.DeleteUserResponse](
+		deleteUser: connect.NewClient[v1.DeleteUserRequest, v1.DeleteUserResponse](
 			httpClient,
 			baseURL+IonscaleServiceDeleteUserProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceDeleteUserMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		getMachine: connect_go.NewClient[v1.GetMachineRequest, v1.GetMachineResponse](
+		getMachine: connect.NewClient[v1.GetMachineRequest, v1.GetMachineResponse](
 			httpClient,
 			baseURL+IonscaleServiceGetMachineProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceGetMachineMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		listMachines: connect_go.NewClient[v1.ListMachinesRequest, v1.ListMachinesResponse](
+		listMachines: connect.NewClient[v1.ListMachinesRequest, v1.ListMachinesResponse](
 			httpClient,
 			baseURL+IonscaleServiceListMachinesProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceListMachinesMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		authorizeMachine: connect_go.NewClient[v1.AuthorizeMachineRequest, v1.AuthorizeMachineResponse](
+		authorizeMachine: connect.NewClient[v1.AuthorizeMachineRequest, v1.AuthorizeMachineResponse](
 			httpClient,
 			baseURL+IonscaleServiceAuthorizeMachineProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceAuthorizeMachineMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		renameMachine: connect_go.NewClient[v1.RenameMachineRequest, v1.RenameMachineResponse](
+		renameMachine: connect.NewClient[v1.RenameMachineRequest, v1.RenameMachineResponse](
 			httpClient,
 			baseURL+IonscaleServiceRenameMachineProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceRenameMachineMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		expireMachine: connect_go.NewClient[v1.ExpireMachineRequest, v1.ExpireMachineResponse](
+		expireMachine: connect.NewClient[v1.ExpireMachineRequest, v1.ExpireMachineResponse](
 			httpClient,
 			baseURL+IonscaleServiceExpireMachineProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceExpireMachineMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		deleteMachine: connect_go.NewClient[v1.DeleteMachineRequest, v1.DeleteMachineResponse](
+		deleteMachine: connect.NewClient[v1.DeleteMachineRequest, v1.DeleteMachineResponse](
 			httpClient,
 			baseURL+IonscaleServiceDeleteMachineProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceDeleteMachineMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		setMachineKeyExpiry: connect_go.NewClient[v1.SetMachineKeyExpiryRequest, v1.SetMachineKeyExpiryResponse](
+		setMachineKeyExpiry: connect.NewClient[v1.SetMachineKeyExpiryRequest, v1.SetMachineKeyExpiryResponse](
 			httpClient,
 			baseURL+IonscaleServiceSetMachineKeyExpiryProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceSetMachineKeyExpiryMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		getMachineRoutes: connect_go.NewClient[v1.GetMachineRoutesRequest, v1.GetMachineRoutesResponse](
+		getMachineRoutes: connect.NewClient[v1.GetMachineRoutesRequest, v1.GetMachineRoutesResponse](
 			httpClient,
 			baseURL+IonscaleServiceGetMachineRoutesProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceGetMachineRoutesMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		enableMachineRoutes: connect_go.NewClient[v1.EnableMachineRoutesRequest, v1.EnableMachineRoutesResponse](
+		enableMachineRoutes: connect.NewClient[v1.EnableMachineRoutesRequest, v1.EnableMachineRoutesResponse](
 			httpClient,
 			baseURL+IonscaleServiceEnableMachineRoutesProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceEnableMachineRoutesMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		disableMachineRoutes: connect_go.NewClient[v1.DisableMachineRoutesRequest, v1.DisableMachineRoutesResponse](
+		disableMachineRoutes: connect.NewClient[v1.DisableMachineRoutesRequest, v1.DisableMachineRoutesResponse](
 			httpClient,
 			baseURL+IonscaleServiceDisableMachineRoutesProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceDisableMachineRoutesMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		enableExitNode: connect_go.NewClient[v1.EnableExitNodeRequest, v1.EnableExitNodeResponse](
+		enableExitNode: connect.NewClient[v1.EnableExitNodeRequest, v1.EnableExitNodeResponse](
 			httpClient,
 			baseURL+IonscaleServiceEnableExitNodeProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceEnableExitNodeMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		disableExitNode: connect_go.NewClient[v1.DisableExitNodeRequest, v1.DisableExitNodeResponse](
+		disableExitNode: connect.NewClient[v1.DisableExitNodeRequest, v1.DisableExitNodeResponse](
 			httpClient,
 			baseURL+IonscaleServiceDisableExitNodeProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceDisableExitNodeMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
-		toggleAutoNameMachine: connect_go.NewClient[v1.ToggleAutoNameMachineRequest, v1.ToggleAutoNameMachineResponse](
+		toggleAutoNameMachine: connect.NewClient[v1.ToggleAutoNameMachineRequest, v1.ToggleAutoNameMachineResponse](
 			httpClient,
 			baseURL+IonscaleServiceToggleAutoNameMachineProcedure,
-			opts...,
+			connect.WithSchema(ionscaleServiceToggleAutoNameMachineMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
 	}
 }
 
 // ionscaleServiceClient implements IonscaleServiceClient.
 type ionscaleServiceClient struct {
-	getVersion                  *connect_go.Client[v1.GetVersionRequest, v1.GetVersionResponse]
-	authenticate                *connect_go.Client[v1.AuthenticateRequest, v1.AuthenticateResponse]
-	getDefaultDERPMap           *connect_go.Client[v1.GetDefaultDERPMapRequest, v1.GetDefaultDERPMapResponse]
-	createTailnet               *connect_go.Client[v1.CreateTailnetRequest, v1.CreateTailnetResponse]
-	updateTailnet               *connect_go.Client[v1.UpdateTailnetRequest, v1.UpdateTailnetResponse]
-	getTailnet                  *connect_go.Client[v1.GetTailnetRequest, v1.GetTailnetResponse]
-	listTailnets                *connect_go.Client[v1.ListTailnetsRequest, v1.ListTailnetsResponse]
-	deleteTailnet               *connect_go.Client[v1.DeleteTailnetRequest, v1.DeleteTailnetResponse]
-	getDERPMap                  *connect_go.Client[v1.GetDERPMapRequest, v1.GetDERPMapResponse]
-	setDERPMap                  *connect_go.Client[v1.SetDERPMapRequest, v1.SetDERPMapResponse]
-	resetDERPMap                *connect_go.Client[v1.ResetDERPMapRequest, v1.ResetDERPMapResponse]
-	enableFileSharing           *connect_go.Client[v1.EnableFileSharingRequest, v1.EnableFileSharingResponse]
-	disableFileSharing          *connect_go.Client[v1.DisableFileSharingRequest, v1.DisableFileSharingResponse]
-	enableServiceCollection     *connect_go.Client[v1.EnableServiceCollectionRequest, v1.EnableServiceCollectionResponse]
-	disableServiceCollection    *connect_go.Client[v1.DisableServiceCollectionRequest, v1.DisableServiceCollectionResponse]
-	enableSSH                   *connect_go.Client[v1.EnableSSHRequest, v1.EnableSSHResponse]
-	disableSSH                  *connect_go.Client[v1.DisableSSHRequest, v1.DisableSSHResponse]
-	enableMachineAuthorization  *connect_go.Client[v1.EnableMachineAuthorizationRequest, v1.EnableMachineAuthorizationResponse]
-	disableMachineAuthorization *connect_go.Client[v1.DisableMachineAuthorizationRequest, v1.DisableMachineAuthorizationResponse]
-	getDNSConfig                *connect_go.Client[v1.GetDNSConfigRequest, v1.GetDNSConfigResponse]
-	setDNSConfig                *connect_go.Client[v1.SetDNSConfigRequest, v1.SetDNSConfigResponse]
-	getIAMPolicy                *connect_go.Client[v1.GetIAMPolicyRequest, v1.GetIAMPolicyResponse]
-	setIAMPolicy                *connect_go.Client[v1.SetIAMPolicyRequest, v1.SetIAMPolicyResponse]
-	getACLPolicy                *connect_go.Client[v1.GetACLPolicyRequest, v1.GetACLPolicyResponse]
-	setACLPolicy                *connect_go.Client[v1.SetACLPolicyRequest, v1.SetACLPolicyResponse]
-	getAuthKey                  *connect_go.Client[v1.GetAuthKeyRequest, v1.GetAuthKeyResponse]
-	createAuthKey               *connect_go.Client[v1.CreateAuthKeyRequest, v1.CreateAuthKeyResponse]
-	deleteAuthKey               *connect_go.Client[v1.DeleteAuthKeyRequest, v1.DeleteAuthKeyResponse]
-	listAuthKeys                *connect_go.Client[v1.ListAuthKeysRequest, v1.ListAuthKeysResponse]
-	listUsers                   *connect_go.Client[v1.ListUsersRequest, v1.ListUsersResponse]
-	deleteUser                  *connect_go.Client[v1.DeleteUserRequest, v1.DeleteUserResponse]
-	getMachine                  *connect_go.Client[v1.GetMachineRequest, v1.GetMachineResponse]
-	listMachines                *connect_go.Client[v1.ListMachinesRequest, v1.ListMachinesResponse]
-	authorizeMachine            *connect_go.Client[v1.AuthorizeMachineRequest, v1.AuthorizeMachineResponse]
-	renameMachine               *connect_go.Client[v1.RenameMachineRequest, v1.RenameMachineResponse]
-	expireMachine               *connect_go.Client[v1.ExpireMachineRequest, v1.ExpireMachineResponse]
-	deleteMachine               *connect_go.Client[v1.DeleteMachineRequest, v1.DeleteMachineResponse]
-	setMachineKeyExpiry         *connect_go.Client[v1.SetMachineKeyExpiryRequest, v1.SetMachineKeyExpiryResponse]
-	getMachineRoutes            *connect_go.Client[v1.GetMachineRoutesRequest, v1.GetMachineRoutesResponse]
-	enableMachineRoutes         *connect_go.Client[v1.EnableMachineRoutesRequest, v1.EnableMachineRoutesResponse]
-	disableMachineRoutes        *connect_go.Client[v1.DisableMachineRoutesRequest, v1.DisableMachineRoutesResponse]
-	enableExitNode              *connect_go.Client[v1.EnableExitNodeRequest, v1.EnableExitNodeResponse]
-	disableExitNode             *connect_go.Client[v1.DisableExitNodeRequest, v1.DisableExitNodeResponse]
-	toggleAutoNameMachine       *connect_go.Client[v1.ToggleAutoNameMachineRequest, v1.ToggleAutoNameMachineResponse]
+	getVersion                  *connect.Client[v1.GetVersionRequest, v1.GetVersionResponse]
+	authenticate                *connect.Client[v1.AuthenticateRequest, v1.AuthenticateResponse]
+	getDefaultDERPMap           *connect.Client[v1.GetDefaultDERPMapRequest, v1.GetDefaultDERPMapResponse]
+	createTailnet               *connect.Client[v1.CreateTailnetRequest, v1.CreateTailnetResponse]
+	updateTailnet               *connect.Client[v1.UpdateTailnetRequest, v1.UpdateTailnetResponse]
+	getTailnet                  *connect.Client[v1.GetTailnetRequest, v1.GetTailnetResponse]
+	listTailnets                *connect.Client[v1.ListTailnetsRequest, v1.ListTailnetsResponse]
+	deleteTailnet               *connect.Client[v1.DeleteTailnetRequest, v1.DeleteTailnetResponse]
+	getDERPMap                  *connect.Client[v1.GetDERPMapRequest, v1.GetDERPMapResponse]
+	setDERPMap                  *connect.Client[v1.SetDERPMapRequest, v1.SetDERPMapResponse]
+	resetDERPMap                *connect.Client[v1.ResetDERPMapRequest, v1.ResetDERPMapResponse]
+	enableFileSharing           *connect.Client[v1.EnableFileSharingRequest, v1.EnableFileSharingResponse]
+	disableFileSharing          *connect.Client[v1.DisableFileSharingRequest, v1.DisableFileSharingResponse]
+	enableServiceCollection     *connect.Client[v1.EnableServiceCollectionRequest, v1.EnableServiceCollectionResponse]
+	disableServiceCollection    *connect.Client[v1.DisableServiceCollectionRequest, v1.DisableServiceCollectionResponse]
+	enableSSH                   *connect.Client[v1.EnableSSHRequest, v1.EnableSSHResponse]
+	disableSSH                  *connect.Client[v1.DisableSSHRequest, v1.DisableSSHResponse]
+	enableMachineAuthorization  *connect.Client[v1.EnableMachineAuthorizationRequest, v1.EnableMachineAuthorizationResponse]
+	disableMachineAuthorization *connect.Client[v1.DisableMachineAuthorizationRequest, v1.DisableMachineAuthorizationResponse]
+	getDNSConfig                *connect.Client[v1.GetDNSConfigRequest, v1.GetDNSConfigResponse]
+	setDNSConfig                *connect.Client[v1.SetDNSConfigRequest, v1.SetDNSConfigResponse]
+	getIAMPolicy                *connect.Client[v1.GetIAMPolicyRequest, v1.GetIAMPolicyResponse]
+	setIAMPolicy                *connect.Client[v1.SetIAMPolicyRequest, v1.SetIAMPolicyResponse]
+	getACLPolicy                *connect.Client[v1.GetACLPolicyRequest, v1.GetACLPolicyResponse]
+	setACLPolicy                *connect.Client[v1.SetACLPolicyRequest, v1.SetACLPolicyResponse]
+	getAuthKey                  *connect.Client[v1.GetAuthKeyRequest, v1.GetAuthKeyResponse]
+	createAuthKey               *connect.Client[v1.CreateAuthKeyRequest, v1.CreateAuthKeyResponse]
+	deleteAuthKey               *connect.Client[v1.DeleteAuthKeyRequest, v1.DeleteAuthKeyResponse]
+	listAuthKeys                *connect.Client[v1.ListAuthKeysRequest, v1.ListAuthKeysResponse]
+	listUsers                   *connect.Client[v1.ListUsersRequest, v1.ListUsersResponse]
+	deleteUser                  *connect.Client[v1.DeleteUserRequest, v1.DeleteUserResponse]
+	getMachine                  *connect.Client[v1.GetMachineRequest, v1.GetMachineResponse]
+	listMachines                *connect.Client[v1.ListMachinesRequest, v1.ListMachinesResponse]
+	authorizeMachine            *connect.Client[v1.AuthorizeMachineRequest, v1.AuthorizeMachineResponse]
+	renameMachine               *connect.Client[v1.RenameMachineRequest, v1.RenameMachineResponse]
+	expireMachine               *connect.Client[v1.ExpireMachineRequest, v1.ExpireMachineResponse]
+	deleteMachine               *connect.Client[v1.DeleteMachineRequest, v1.DeleteMachineResponse]
+	setMachineKeyExpiry         *connect.Client[v1.SetMachineKeyExpiryRequest, v1.SetMachineKeyExpiryResponse]
+	getMachineRoutes            *connect.Client[v1.GetMachineRoutesRequest, v1.GetMachineRoutesResponse]
+	enableMachineRoutes         *connect.Client[v1.EnableMachineRoutesRequest, v1.EnableMachineRoutesResponse]
+	disableMachineRoutes        *connect.Client[v1.DisableMachineRoutesRequest, v1.DisableMachineRoutesResponse]
+	enableExitNode              *connect.Client[v1.EnableExitNodeRequest, v1.EnableExitNodeResponse]
+	disableExitNode             *connect.Client[v1.DisableExitNodeRequest, v1.DisableExitNodeResponse]
+	toggleAutoNameMachine       *connect.Client[v1.ToggleAutoNameMachineRequest, v1.ToggleAutoNameMachineResponse]
 }
 
 // GetVersion calls ionscale.v1.IonscaleService.GetVersion.
-func (c *ionscaleServiceClient) GetVersion(ctx context.Context, req *connect_go.Request[v1.GetVersionRequest]) (*connect_go.Response[v1.GetVersionResponse], error) {
+func (c *ionscaleServiceClient) GetVersion(ctx context.Context, req *connect.Request[v1.GetVersionRequest]) (*connect.Response[v1.GetVersionResponse], error) {
 	return c.getVersion.CallUnary(ctx, req)
 }
 
 // Authenticate calls ionscale.v1.IonscaleService.Authenticate.
-func (c *ionscaleServiceClient) Authenticate(ctx context.Context, req *connect_go.Request[v1.AuthenticateRequest]) (*connect_go.ServerStreamForClient[v1.AuthenticateResponse], error) {
+func (c *ionscaleServiceClient) Authenticate(ctx context.Context, req *connect.Request[v1.AuthenticateRequest]) (*connect.ServerStreamForClient[v1.AuthenticateResponse], error) {
 	return c.authenticate.CallServerStream(ctx, req)
 }
 
 // GetDefaultDERPMap calls ionscale.v1.IonscaleService.GetDefaultDERPMap.
-func (c *ionscaleServiceClient) GetDefaultDERPMap(ctx context.Context, req *connect_go.Request[v1.GetDefaultDERPMapRequest]) (*connect_go.Response[v1.GetDefaultDERPMapResponse], error) {
+func (c *ionscaleServiceClient) GetDefaultDERPMap(ctx context.Context, req *connect.Request[v1.GetDefaultDERPMapRequest]) (*connect.Response[v1.GetDefaultDERPMapResponse], error) {
 	return c.getDefaultDERPMap.CallUnary(ctx, req)
 }
 
 // CreateTailnet calls ionscale.v1.IonscaleService.CreateTailnet.
-func (c *ionscaleServiceClient) CreateTailnet(ctx context.Context, req *connect_go.Request[v1.CreateTailnetRequest]) (*connect_go.Response[v1.CreateTailnetResponse], error) {
+func (c *ionscaleServiceClient) CreateTailnet(ctx context.Context, req *connect.Request[v1.CreateTailnetRequest]) (*connect.Response[v1.CreateTailnetResponse], error) {
 	return c.createTailnet.CallUnary(ctx, req)
 }
 
 // UpdateTailnet calls ionscale.v1.IonscaleService.UpdateTailnet.
-func (c *ionscaleServiceClient) UpdateTailnet(ctx context.Context, req *connect_go.Request[v1.UpdateTailnetRequest]) (*connect_go.Response[v1.UpdateTailnetResponse], error) {
+func (c *ionscaleServiceClient) UpdateTailnet(ctx context.Context, req *connect.Request[v1.UpdateTailnetRequest]) (*connect.Response[v1.UpdateTailnetResponse], error) {
 	return c.updateTailnet.CallUnary(ctx, req)
 }
 
 // GetTailnet calls ionscale.v1.IonscaleService.GetTailnet.
-func (c *ionscaleServiceClient) GetTailnet(ctx context.Context, req *connect_go.Request[v1.GetTailnetRequest]) (*connect_go.Response[v1.GetTailnetResponse], error) {
+func (c *ionscaleServiceClient) GetTailnet(ctx context.Context, req *connect.Request[v1.GetTailnetRequest]) (*connect.Response[v1.GetTailnetResponse], error) {
 	return c.getTailnet.CallUnary(ctx, req)
 }
 
 // ListTailnets calls ionscale.v1.IonscaleService.ListTailnets.
-func (c *ionscaleServiceClient) ListTailnets(ctx context.Context, req *connect_go.Request[v1.ListTailnetsRequest]) (*connect_go.Response[v1.ListTailnetsResponse], error) {
+func (c *ionscaleServiceClient) ListTailnets(ctx context.Context, req *connect.Request[v1.ListTailnetsRequest]) (*connect.Response[v1.ListTailnetsResponse], error) {
 	return c.listTailnets.CallUnary(ctx, req)
 }
 
 // DeleteTailnet calls ionscale.v1.IonscaleService.DeleteTailnet.
-func (c *ionscaleServiceClient) DeleteTailnet(ctx context.Context, req *connect_go.Request[v1.DeleteTailnetRequest]) (*connect_go.Response[v1.DeleteTailnetResponse], error) {
+func (c *ionscaleServiceClient) DeleteTailnet(ctx context.Context, req *connect.Request[v1.DeleteTailnetRequest]) (*connect.Response[v1.DeleteTailnetResponse], error) {
 	return c.deleteTailnet.CallUnary(ctx, req)
 }
 
 // GetDERPMap calls ionscale.v1.IonscaleService.GetDERPMap.
-func (c *ionscaleServiceClient) GetDERPMap(ctx context.Context, req *connect_go.Request[v1.GetDERPMapRequest]) (*connect_go.Response[v1.GetDERPMapResponse], error) {
+func (c *ionscaleServiceClient) GetDERPMap(ctx context.Context, req *connect.Request[v1.GetDERPMapRequest]) (*connect.Response[v1.GetDERPMapResponse], error) {
 	return c.getDERPMap.CallUnary(ctx, req)
 }
 
 // SetDERPMap calls ionscale.v1.IonscaleService.SetDERPMap.
-func (c *ionscaleServiceClient) SetDERPMap(ctx context.Context, req *connect_go.Request[v1.SetDERPMapRequest]) (*connect_go.Response[v1.SetDERPMapResponse], error) {
+func (c *ionscaleServiceClient) SetDERPMap(ctx context.Context, req *connect.Request[v1.SetDERPMapRequest]) (*connect.Response[v1.SetDERPMapResponse], error) {
 	return c.setDERPMap.CallUnary(ctx, req)
 }
 
 // ResetDERPMap calls ionscale.v1.IonscaleService.ResetDERPMap.
-func (c *ionscaleServiceClient) ResetDERPMap(ctx context.Context, req *connect_go.Request[v1.ResetDERPMapRequest]) (*connect_go.Response[v1.ResetDERPMapResponse], error) {
+func (c *ionscaleServiceClient) ResetDERPMap(ctx context.Context, req *connect.Request[v1.ResetDERPMapRequest]) (*connect.Response[v1.ResetDERPMapResponse], error) {
 	return c.resetDERPMap.CallUnary(ctx, req)
 }
 
 // EnableFileSharing calls ionscale.v1.IonscaleService.EnableFileSharing.
-func (c *ionscaleServiceClient) EnableFileSharing(ctx context.Context, req *connect_go.Request[v1.EnableFileSharingRequest]) (*connect_go.Response[v1.EnableFileSharingResponse], error) {
+func (c *ionscaleServiceClient) EnableFileSharing(ctx context.Context, req *connect.Request[v1.EnableFileSharingRequest]) (*connect.Response[v1.EnableFileSharingResponse], error) {
 	return c.enableFileSharing.CallUnary(ctx, req)
 }
 
 // DisableFileSharing calls ionscale.v1.IonscaleService.DisableFileSharing.
-func (c *ionscaleServiceClient) DisableFileSharing(ctx context.Context, req *connect_go.Request[v1.DisableFileSharingRequest]) (*connect_go.Response[v1.DisableFileSharingResponse], error) {
+func (c *ionscaleServiceClient) DisableFileSharing(ctx context.Context, req *connect.Request[v1.DisableFileSharingRequest]) (*connect.Response[v1.DisableFileSharingResponse], error) {
 	return c.disableFileSharing.CallUnary(ctx, req)
 }
 
 // EnableServiceCollection calls ionscale.v1.IonscaleService.EnableServiceCollection.
-func (c *ionscaleServiceClient) EnableServiceCollection(ctx context.Context, req *connect_go.Request[v1.EnableServiceCollectionRequest]) (*connect_go.Response[v1.EnableServiceCollectionResponse], error) {
+func (c *ionscaleServiceClient) EnableServiceCollection(ctx context.Context, req *connect.Request[v1.EnableServiceCollectionRequest]) (*connect.Response[v1.EnableServiceCollectionResponse], error) {
 	return c.enableServiceCollection.CallUnary(ctx, req)
 }
 
 // DisableServiceCollection calls ionscale.v1.IonscaleService.DisableServiceCollection.
-func (c *ionscaleServiceClient) DisableServiceCollection(ctx context.Context, req *connect_go.Request[v1.DisableServiceCollectionRequest]) (*connect_go.Response[v1.DisableServiceCollectionResponse], error) {
+func (c *ionscaleServiceClient) DisableServiceCollection(ctx context.Context, req *connect.Request[v1.DisableServiceCollectionRequest]) (*connect.Response[v1.DisableServiceCollectionResponse], error) {
 	return c.disableServiceCollection.CallUnary(ctx, req)
 }
 
 // EnableSSH calls ionscale.v1.IonscaleService.EnableSSH.
-func (c *ionscaleServiceClient) EnableSSH(ctx context.Context, req *connect_go.Request[v1.EnableSSHRequest]) (*connect_go.Response[v1.EnableSSHResponse], error) {
+func (c *ionscaleServiceClient) EnableSSH(ctx context.Context, req *connect.Request[v1.EnableSSHRequest]) (*connect.Response[v1.EnableSSHResponse], error) {
 	return c.enableSSH.CallUnary(ctx, req)
 }
 
 // DisableSSH calls ionscale.v1.IonscaleService.DisableSSH.
-func (c *ionscaleServiceClient) DisableSSH(ctx context.Context, req *connect_go.Request[v1.DisableSSHRequest]) (*connect_go.Response[v1.DisableSSHResponse], error) {
+func (c *ionscaleServiceClient) DisableSSH(ctx context.Context, req *connect.Request[v1.DisableSSHRequest]) (*connect.Response[v1.DisableSSHResponse], error) {
 	return c.disableSSH.CallUnary(ctx, req)
 }
 
 // EnableMachineAuthorization calls ionscale.v1.IonscaleService.EnableMachineAuthorization.
-func (c *ionscaleServiceClient) EnableMachineAuthorization(ctx context.Context, req *connect_go.Request[v1.EnableMachineAuthorizationRequest]) (*connect_go.Response[v1.EnableMachineAuthorizationResponse], error) {
+func (c *ionscaleServiceClient) EnableMachineAuthorization(ctx context.Context, req *connect.Request[v1.EnableMachineAuthorizationRequest]) (*connect.Response[v1.EnableMachineAuthorizationResponse], error) {
 	return c.enableMachineAuthorization.CallUnary(ctx, req)
 }
 
 // DisableMachineAuthorization calls ionscale.v1.IonscaleService.DisableMachineAuthorization.
-func (c *ionscaleServiceClient) DisableMachineAuthorization(ctx context.Context, req *connect_go.Request[v1.DisableMachineAuthorizationRequest]) (*connect_go.Response[v1.DisableMachineAuthorizationResponse], error) {
+func (c *ionscaleServiceClient) DisableMachineAuthorization(ctx context.Context, req *connect.Request[v1.DisableMachineAuthorizationRequest]) (*connect.Response[v1.DisableMachineAuthorizationResponse], error) {
 	return c.disableMachineAuthorization.CallUnary(ctx, req)
 }
 
 // GetDNSConfig calls ionscale.v1.IonscaleService.GetDNSConfig.
-func (c *ionscaleServiceClient) GetDNSConfig(ctx context.Context, req *connect_go.Request[v1.GetDNSConfigRequest]) (*connect_go.Response[v1.GetDNSConfigResponse], error) {
+func (c *ionscaleServiceClient) GetDNSConfig(ctx context.Context, req *connect.Request[v1.GetDNSConfigRequest]) (*connect.Response[v1.GetDNSConfigResponse], error) {
 	return c.getDNSConfig.CallUnary(ctx, req)
 }
 
 // SetDNSConfig calls ionscale.v1.IonscaleService.SetDNSConfig.
-func (c *ionscaleServiceClient) SetDNSConfig(ctx context.Context, req *connect_go.Request[v1.SetDNSConfigRequest]) (*connect_go.Response[v1.SetDNSConfigResponse], error) {
+func (c *ionscaleServiceClient) SetDNSConfig(ctx context.Context, req *connect.Request[v1.SetDNSConfigRequest]) (*connect.Response[v1.SetDNSConfigResponse], error) {
 	return c.setDNSConfig.CallUnary(ctx, req)
 }
 
 // GetIAMPolicy calls ionscale.v1.IonscaleService.GetIAMPolicy.
-func (c *ionscaleServiceClient) GetIAMPolicy(ctx context.Context, req *connect_go.Request[v1.GetIAMPolicyRequest]) (*connect_go.Response[v1.GetIAMPolicyResponse], error) {
+func (c *ionscaleServiceClient) GetIAMPolicy(ctx context.Context, req *connect.Request[v1.GetIAMPolicyRequest]) (*connect.Response[v1.GetIAMPolicyResponse], error) {
 	return c.getIAMPolicy.CallUnary(ctx, req)
 }
 
 // SetIAMPolicy calls ionscale.v1.IonscaleService.SetIAMPolicy.
-func (c *ionscaleServiceClient) SetIAMPolicy(ctx context.Context, req *connect_go.Request[v1.SetIAMPolicyRequest]) (*connect_go.Response[v1.SetIAMPolicyResponse], error) {
+func (c *ionscaleServiceClient) SetIAMPolicy(ctx context.Context, req *connect.Request[v1.SetIAMPolicyRequest]) (*connect.Response[v1.SetIAMPolicyResponse], error) {
 	return c.setIAMPolicy.CallUnary(ctx, req)
 }
 
 // GetACLPolicy calls ionscale.v1.IonscaleService.GetACLPolicy.
-func (c *ionscaleServiceClient) GetACLPolicy(ctx context.Context, req *connect_go.Request[v1.GetACLPolicyRequest]) (*connect_go.Response[v1.GetACLPolicyResponse], error) {
+func (c *ionscaleServiceClient) GetACLPolicy(ctx context.Context, req *connect.Request[v1.GetACLPolicyRequest]) (*connect.Response[v1.GetACLPolicyResponse], error) {
 	return c.getACLPolicy.CallUnary(ctx, req)
 }
 
 // SetACLPolicy calls ionscale.v1.IonscaleService.SetACLPolicy.
-func (c *ionscaleServiceClient) SetACLPolicy(ctx context.Context, req *connect_go.Request[v1.SetACLPolicyRequest]) (*connect_go.Response[v1.SetACLPolicyResponse], error) {
+func (c *ionscaleServiceClient) SetACLPolicy(ctx context.Context, req *connect.Request[v1.SetACLPolicyRequest]) (*connect.Response[v1.SetACLPolicyResponse], error) {
 	return c.setACLPolicy.CallUnary(ctx, req)
 }
 
 // GetAuthKey calls ionscale.v1.IonscaleService.GetAuthKey.
-func (c *ionscaleServiceClient) GetAuthKey(ctx context.Context, req *connect_go.Request[v1.GetAuthKeyRequest]) (*connect_go.Response[v1.GetAuthKeyResponse], error) {
+func (c *ionscaleServiceClient) GetAuthKey(ctx context.Context, req *connect.Request[v1.GetAuthKeyRequest]) (*connect.Response[v1.GetAuthKeyResponse], error) {
 	return c.getAuthKey.CallUnary(ctx, req)
 }
 
 // CreateAuthKey calls ionscale.v1.IonscaleService.CreateAuthKey.
-func (c *ionscaleServiceClient) CreateAuthKey(ctx context.Context, req *connect_go.Request[v1.CreateAuthKeyRequest]) (*connect_go.Response[v1.CreateAuthKeyResponse], error) {
+func (c *ionscaleServiceClient) CreateAuthKey(ctx context.Context, req *connect.Request[v1.CreateAuthKeyRequest]) (*connect.Response[v1.CreateAuthKeyResponse], error) {
 	return c.createAuthKey.CallUnary(ctx, req)
 }
 
 // DeleteAuthKey calls ionscale.v1.IonscaleService.DeleteAuthKey.
-func (c *ionscaleServiceClient) DeleteAuthKey(ctx context.Context, req *connect_go.Request[v1.DeleteAuthKeyRequest]) (*connect_go.Response[v1.DeleteAuthKeyResponse], error) {
+func (c *ionscaleServiceClient) DeleteAuthKey(ctx context.Context, req *connect.Request[v1.DeleteAuthKeyRequest]) (*connect.Response[v1.DeleteAuthKeyResponse], error) {
 	return c.deleteAuthKey.CallUnary(ctx, req)
 }
 
 // ListAuthKeys calls ionscale.v1.IonscaleService.ListAuthKeys.
-func (c *ionscaleServiceClient) ListAuthKeys(ctx context.Context, req *connect_go.Request[v1.ListAuthKeysRequest]) (*connect_go.Response[v1.ListAuthKeysResponse], error) {
+func (c *ionscaleServiceClient) ListAuthKeys(ctx context.Context, req *connect.Request[v1.ListAuthKeysRequest]) (*connect.Response[v1.ListAuthKeysResponse], error) {
 	return c.listAuthKeys.CallUnary(ctx, req)
 }
 
 // ListUsers calls ionscale.v1.IonscaleService.ListUsers.
-func (c *ionscaleServiceClient) ListUsers(ctx context.Context, req *connect_go.Request[v1.ListUsersRequest]) (*connect_go.Response[v1.ListUsersResponse], error) {
+func (c *ionscaleServiceClient) ListUsers(ctx context.Context, req *connect.Request[v1.ListUsersRequest]) (*connect.Response[v1.ListUsersResponse], error) {
 	return c.listUsers.CallUnary(ctx, req)
 }
 
 // DeleteUser calls ionscale.v1.IonscaleService.DeleteUser.
-func (c *ionscaleServiceClient) DeleteUser(ctx context.Context, req *connect_go.Request[v1.DeleteUserRequest]) (*connect_go.Response[v1.DeleteUserResponse], error) {
+func (c *ionscaleServiceClient) DeleteUser(ctx context.Context, req *connect.Request[v1.DeleteUserRequest]) (*connect.Response[v1.DeleteUserResponse], error) {
 	return c.deleteUser.CallUnary(ctx, req)
 }
 
 // GetMachine calls ionscale.v1.IonscaleService.GetMachine.
-func (c *ionscaleServiceClient) GetMachine(ctx context.Context, req *connect_go.Request[v1.GetMachineRequest]) (*connect_go.Response[v1.GetMachineResponse], error) {
+func (c *ionscaleServiceClient) GetMachine(ctx context.Context, req *connect.Request[v1.GetMachineRequest]) (*connect.Response[v1.GetMachineResponse], error) {
 	return c.getMachine.CallUnary(ctx, req)
 }
 
 // ListMachines calls ionscale.v1.IonscaleService.ListMachines.
-func (c *ionscaleServiceClient) ListMachines(ctx context.Context, req *connect_go.Request[v1.ListMachinesRequest]) (*connect_go.Response[v1.ListMachinesResponse], error) {
+func (c *ionscaleServiceClient) ListMachines(ctx context.Context, req *connect.Request[v1.ListMachinesRequest]) (*connect.Response[v1.ListMachinesResponse], error) {
 	return c.listMachines.CallUnary(ctx, req)
 }
 
 // AuthorizeMachine calls ionscale.v1.IonscaleService.AuthorizeMachine.
-func (c *ionscaleServiceClient) AuthorizeMachine(ctx context.Context, req *connect_go.Request[v1.AuthorizeMachineRequest]) (*connect_go.Response[v1.AuthorizeMachineResponse], error) {
+func (c *ionscaleServiceClient) AuthorizeMachine(ctx context.Context, req *connect.Request[v1.AuthorizeMachineRequest]) (*connect.Response[v1.AuthorizeMachineResponse], error) {
 	return c.authorizeMachine.CallUnary(ctx, req)
 }
 
 // RenameMachine calls ionscale.v1.IonscaleService.RenameMachine.
-func (c *ionscaleServiceClient) RenameMachine(ctx context.Context, req *connect_go.Request[v1.RenameMachineRequest]) (*connect_go.Response[v1.RenameMachineResponse], error) {
+func (c *ionscaleServiceClient) RenameMachine(ctx context.Context, req *connect.Request[v1.RenameMachineRequest]) (*connect.Response[v1.RenameMachineResponse], error) {
 	return c.renameMachine.CallUnary(ctx, req)
 }
 
 // ExpireMachine calls ionscale.v1.IonscaleService.ExpireMachine.
-func (c *ionscaleServiceClient) ExpireMachine(ctx context.Context, req *connect_go.Request[v1.ExpireMachineRequest]) (*connect_go.Response[v1.ExpireMachineResponse], error) {
+func (c *ionscaleServiceClient) ExpireMachine(ctx context.Context, req *connect.Request[v1.ExpireMachineRequest]) (*connect.Response[v1.ExpireMachineResponse], error) {
 	return c.expireMachine.CallUnary(ctx, req)
 }
 
 // DeleteMachine calls ionscale.v1.IonscaleService.DeleteMachine.
-func (c *ionscaleServiceClient) DeleteMachine(ctx context.Context, req *connect_go.Request[v1.DeleteMachineRequest]) (*connect_go.Response[v1.DeleteMachineResponse], error) {
+func (c *ionscaleServiceClient) DeleteMachine(ctx context.Context, req *connect.Request[v1.DeleteMachineRequest]) (*connect.Response[v1.DeleteMachineResponse], error) {
 	return c.deleteMachine.CallUnary(ctx, req)
 }
 
 // SetMachineKeyExpiry calls ionscale.v1.IonscaleService.SetMachineKeyExpiry.
-func (c *ionscaleServiceClient) SetMachineKeyExpiry(ctx context.Context, req *connect_go.Request[v1.SetMachineKeyExpiryRequest]) (*connect_go.Response[v1.SetMachineKeyExpiryResponse], error) {
+func (c *ionscaleServiceClient) SetMachineKeyExpiry(ctx context.Context, req *connect.Request[v1.SetMachineKeyExpiryRequest]) (*connect.Response[v1.SetMachineKeyExpiryResponse], error) {
 	return c.setMachineKeyExpiry.CallUnary(ctx, req)
 }
 
 // GetMachineRoutes calls ionscale.v1.IonscaleService.GetMachineRoutes.
-func (c *ionscaleServiceClient) GetMachineRoutes(ctx context.Context, req *connect_go.Request[v1.GetMachineRoutesRequest]) (*connect_go.Response[v1.GetMachineRoutesResponse], error) {
+func (c *ionscaleServiceClient) GetMachineRoutes(ctx context.Context, req *connect.Request[v1.GetMachineRoutesRequest]) (*connect.Response[v1.GetMachineRoutesResponse], error) {
 	return c.getMachineRoutes.CallUnary(ctx, req)
 }
 
 // EnableMachineRoutes calls ionscale.v1.IonscaleService.EnableMachineRoutes.
-func (c *ionscaleServiceClient) EnableMachineRoutes(ctx context.Context, req *connect_go.Request[v1.EnableMachineRoutesRequest]) (*connect_go.Response[v1.EnableMachineRoutesResponse], error) {
+func (c *ionscaleServiceClient) EnableMachineRoutes(ctx context.Context, req *connect.Request[v1.EnableMachineRoutesRequest]) (*connect.Response[v1.EnableMachineRoutesResponse], error) {
 	return c.enableMachineRoutes.CallUnary(ctx, req)
 }
 
 // DisableMachineRoutes calls ionscale.v1.IonscaleService.DisableMachineRoutes.
-func (c *ionscaleServiceClient) DisableMachineRoutes(ctx context.Context, req *connect_go.Request[v1.DisableMachineRoutesRequest]) (*connect_go.Response[v1.DisableMachineRoutesResponse], error) {
+func (c *ionscaleServiceClient) DisableMachineRoutes(ctx context.Context, req *connect.Request[v1.DisableMachineRoutesRequest]) (*connect.Response[v1.DisableMachineRoutesResponse], error) {
 	return c.disableMachineRoutes.CallUnary(ctx, req)
 }
 
 // EnableExitNode calls ionscale.v1.IonscaleService.EnableExitNode.
-func (c *ionscaleServiceClient) EnableExitNode(ctx context.Context, req *connect_go.Request[v1.EnableExitNodeRequest]) (*connect_go.Response[v1.EnableExitNodeResponse], error) {
+func (c *ionscaleServiceClient) EnableExitNode(ctx context.Context, req *connect.Request[v1.EnableExitNodeRequest]) (*connect.Response[v1.EnableExitNodeResponse], error) {
 	return c.enableExitNode.CallUnary(ctx, req)
 }
 
 // DisableExitNode calls ionscale.v1.IonscaleService.DisableExitNode.
-func (c *ionscaleServiceClient) DisableExitNode(ctx context.Context, req *connect_go.Request[v1.DisableExitNodeRequest]) (*connect_go.Response[v1.DisableExitNodeResponse], error) {
+func (c *ionscaleServiceClient) DisableExitNode(ctx context.Context, req *connect.Request[v1.DisableExitNodeRequest]) (*connect.Response[v1.DisableExitNodeResponse], error) {
 	return c.disableExitNode.CallUnary(ctx, req)
 }
 
 // ToggleAutoNameMachine calls ionscale.v1.IonscaleService.ToggleAutoNameMachine.
-func (c *ionscaleServiceClient) ToggleAutoNameMachine(ctx context.Context, req *connect_go.Request[v1.ToggleAutoNameMachineRequest]) (*connect_go.Response[v1.ToggleAutoNameMachineResponse], error) {
+func (c *ionscaleServiceClient) ToggleAutoNameMachine(ctx context.Context, req *connect.Request[v1.ToggleAutoNameMachineRequest]) (*connect.Response[v1.ToggleAutoNameMachineResponse], error) {
 	return c.toggleAutoNameMachine.CallUnary(ctx, req)
 }
 
 // IonscaleServiceHandler is an implementation of the ionscale.v1.IonscaleService service.
 type IonscaleServiceHandler interface {
-	GetVersion(context.Context, *connect_go.Request[v1.GetVersionRequest]) (*connect_go.Response[v1.GetVersionResponse], error)
-	Authenticate(context.Context, *connect_go.Request[v1.AuthenticateRequest], *connect_go.ServerStream[v1.AuthenticateResponse]) error
-	GetDefaultDERPMap(context.Context, *connect_go.Request[v1.GetDefaultDERPMapRequest]) (*connect_go.Response[v1.GetDefaultDERPMapResponse], error)
-	CreateTailnet(context.Context, *connect_go.Request[v1.CreateTailnetRequest]) (*connect_go.Response[v1.CreateTailnetResponse], error)
-	UpdateTailnet(context.Context, *connect_go.Request[v1.UpdateTailnetRequest]) (*connect_go.Response[v1.UpdateTailnetResponse], error)
-	GetTailnet(context.Context, *connect_go.Request[v1.GetTailnetRequest]) (*connect_go.Response[v1.GetTailnetResponse], error)
-	ListTailnets(context.Context, *connect_go.Request[v1.ListTailnetsRequest]) (*connect_go.Response[v1.ListTailnetsResponse], error)
-	DeleteTailnet(context.Context, *connect_go.Request[v1.DeleteTailnetRequest]) (*connect_go.Response[v1.DeleteTailnetResponse], error)
-	GetDERPMap(context.Context, *connect_go.Request[v1.GetDERPMapRequest]) (*connect_go.Response[v1.GetDERPMapResponse], error)
-	SetDERPMap(context.Context, *connect_go.Request[v1.SetDERPMapRequest]) (*connect_go.Response[v1.SetDERPMapResponse], error)
-	ResetDERPMap(context.Context, *connect_go.Request[v1.ResetDERPMapRequest]) (*connect_go.Response[v1.ResetDERPMapResponse], error)
-	EnableFileSharing(context.Context, *connect_go.Request[v1.EnableFileSharingRequest]) (*connect_go.Response[v1.EnableFileSharingResponse], error)
-	DisableFileSharing(context.Context, *connect_go.Request[v1.DisableFileSharingRequest]) (*connect_go.Response[v1.DisableFileSharingResponse], error)
-	EnableServiceCollection(context.Context, *connect_go.Request[v1.EnableServiceCollectionRequest]) (*connect_go.Response[v1.EnableServiceCollectionResponse], error)
-	DisableServiceCollection(context.Context, *connect_go.Request[v1.DisableServiceCollectionRequest]) (*connect_go.Response[v1.DisableServiceCollectionResponse], error)
-	EnableSSH(context.Context, *connect_go.Request[v1.EnableSSHRequest]) (*connect_go.Response[v1.EnableSSHResponse], error)
-	DisableSSH(context.Context, *connect_go.Request[v1.DisableSSHRequest]) (*connect_go.Response[v1.DisableSSHResponse], error)
-	EnableMachineAuthorization(context.Context, *connect_go.Request[v1.EnableMachineAuthorizationRequest]) (*connect_go.Response[v1.EnableMachineAuthorizationResponse], error)
-	DisableMachineAuthorization(context.Context, *connect_go.Request[v1.DisableMachineAuthorizationRequest]) (*connect_go.Response[v1.DisableMachineAuthorizationResponse], error)
-	GetDNSConfig(context.Context, *connect_go.Request[v1.GetDNSConfigRequest]) (*connect_go.Response[v1.GetDNSConfigResponse], error)
-	SetDNSConfig(context.Context, *connect_go.Request[v1.SetDNSConfigRequest]) (*connect_go.Response[v1.SetDNSConfigResponse], error)
-	GetIAMPolicy(context.Context, *connect_go.Request[v1.GetIAMPolicyRequest]) (*connect_go.Response[v1.GetIAMPolicyResponse], error)
-	SetIAMPolicy(context.Context, *connect_go.Request[v1.SetIAMPolicyRequest]) (*connect_go.Response[v1.SetIAMPolicyResponse], error)
-	GetACLPolicy(context.Context, *connect_go.Request[v1.GetACLPolicyRequest]) (*connect_go.Response[v1.GetACLPolicyResponse], error)
-	SetACLPolicy(context.Context, *connect_go.Request[v1.SetACLPolicyRequest]) (*connect_go.Response[v1.SetACLPolicyResponse], error)
-	GetAuthKey(context.Context, *connect_go.Request[v1.GetAuthKeyRequest]) (*connect_go.Response[v1.GetAuthKeyResponse], error)
-	CreateAuthKey(context.Context, *connect_go.Request[v1.CreateAuthKeyRequest]) (*connect_go.Response[v1.CreateAuthKeyResponse], error)
-	DeleteAuthKey(context.Context, *connect_go.Request[v1.DeleteAuthKeyRequest]) (*connect_go.Response[v1.DeleteAuthKeyResponse], error)
-	ListAuthKeys(context.Context, *connect_go.Request[v1.ListAuthKeysRequest]) (*connect_go.Response[v1.ListAuthKeysResponse], error)
-	ListUsers(context.Context, *connect_go.Request[v1.ListUsersRequest]) (*connect_go.Response[v1.ListUsersResponse], error)
-	DeleteUser(context.Context, *connect_go.Request[v1.DeleteUserRequest]) (*connect_go.Response[v1.DeleteUserResponse], error)
-	GetMachine(context.Context, *connect_go.Request[v1.GetMachineRequest]) (*connect_go.Response[v1.GetMachineResponse], error)
-	ListMachines(context.Context, *connect_go.Request[v1.ListMachinesRequest]) (*connect_go.Response[v1.ListMachinesResponse], error)
-	AuthorizeMachine(context.Context, *connect_go.Request[v1.AuthorizeMachineRequest]) (*connect_go.Response[v1.AuthorizeMachineResponse], error)
-	RenameMachine(context.Context, *connect_go.Request[v1.RenameMachineRequest]) (*connect_go.Response[v1.RenameMachineResponse], error)
-	ExpireMachine(context.Context, *connect_go.Request[v1.ExpireMachineRequest]) (*connect_go.Response[v1.ExpireMachineResponse], error)
-	DeleteMachine(context.Context, *connect_go.Request[v1.DeleteMachineRequest]) (*connect_go.Response[v1.DeleteMachineResponse], error)
-	SetMachineKeyExpiry(context.Context, *connect_go.Request[v1.SetMachineKeyExpiryRequest]) (*connect_go.Response[v1.SetMachineKeyExpiryResponse], error)
-	GetMachineRoutes(context.Context, *connect_go.Request[v1.GetMachineRoutesRequest]) (*connect_go.Response[v1.GetMachineRoutesResponse], error)
-	EnableMachineRoutes(context.Context, *connect_go.Request[v1.EnableMachineRoutesRequest]) (*connect_go.Response[v1.EnableMachineRoutesResponse], error)
-	DisableMachineRoutes(context.Context, *connect_go.Request[v1.DisableMachineRoutesRequest]) (*connect_go.Response[v1.DisableMachineRoutesResponse], error)
-	EnableExitNode(context.Context, *connect_go.Request[v1.EnableExitNodeRequest]) (*connect_go.Response[v1.EnableExitNodeResponse], error)
-	DisableExitNode(context.Context, *connect_go.Request[v1.DisableExitNodeRequest]) (*connect_go.Response[v1.DisableExitNodeResponse], error)
-	ToggleAutoNameMachine(context.Context, *connect_go.Request[v1.ToggleAutoNameMachineRequest]) (*connect_go.Response[v1.ToggleAutoNameMachineResponse], error)
+	GetVersion(context.Context, *connect.Request[v1.GetVersionRequest]) (*connect.Response[v1.GetVersionResponse], error)
+	Authenticate(context.Context, *connect.Request[v1.AuthenticateRequest], *connect.ServerStream[v1.AuthenticateResponse]) error
+	GetDefaultDERPMap(context.Context, *connect.Request[v1.GetDefaultDERPMapRequest]) (*connect.Response[v1.GetDefaultDERPMapResponse], error)
+	CreateTailnet(context.Context, *connect.Request[v1.CreateTailnetRequest]) (*connect.Response[v1.CreateTailnetResponse], error)
+	UpdateTailnet(context.Context, *connect.Request[v1.UpdateTailnetRequest]) (*connect.Response[v1.UpdateTailnetResponse], error)
+	GetTailnet(context.Context, *connect.Request[v1.GetTailnetRequest]) (*connect.Response[v1.GetTailnetResponse], error)
+	ListTailnets(context.Context, *connect.Request[v1.ListTailnetsRequest]) (*connect.Response[v1.ListTailnetsResponse], error)
+	DeleteTailnet(context.Context, *connect.Request[v1.DeleteTailnetRequest]) (*connect.Response[v1.DeleteTailnetResponse], error)
+	GetDERPMap(context.Context, *connect.Request[v1.GetDERPMapRequest]) (*connect.Response[v1.GetDERPMapResponse], error)
+	SetDERPMap(context.Context, *connect.Request[v1.SetDERPMapRequest]) (*connect.Response[v1.SetDERPMapResponse], error)
+	ResetDERPMap(context.Context, *connect.Request[v1.ResetDERPMapRequest]) (*connect.Response[v1.ResetDERPMapResponse], error)
+	EnableFileSharing(context.Context, *connect.Request[v1.EnableFileSharingRequest]) (*connect.Response[v1.EnableFileSharingResponse], error)
+	DisableFileSharing(context.Context, *connect.Request[v1.DisableFileSharingRequest]) (*connect.Response[v1.DisableFileSharingResponse], error)
+	EnableServiceCollection(context.Context, *connect.Request[v1.EnableServiceCollectionRequest]) (*connect.Response[v1.EnableServiceCollectionResponse], error)
+	DisableServiceCollection(context.Context, *connect.Request[v1.DisableServiceCollectionRequest]) (*connect.Response[v1.DisableServiceCollectionResponse], error)
+	EnableSSH(context.Context, *connect.Request[v1.EnableSSHRequest]) (*connect.Response[v1.EnableSSHResponse], error)
+	DisableSSH(context.Context, *connect.Request[v1.DisableSSHRequest]) (*connect.Response[v1.DisableSSHResponse], error)
+	EnableMachineAuthorization(context.Context, *connect.Request[v1.EnableMachineAuthorizationRequest]) (*connect.Response[v1.EnableMachineAuthorizationResponse], error)
+	DisableMachineAuthorization(context.Context, *connect.Request[v1.DisableMachineAuthorizationRequest]) (*connect.Response[v1.DisableMachineAuthorizationResponse], error)
+	GetDNSConfig(context.Context, *connect.Request[v1.GetDNSConfigRequest]) (*connect.Response[v1.GetDNSConfigResponse], error)
+	SetDNSConfig(context.Context, *connect.Request[v1.SetDNSConfigRequest]) (*connect.Response[v1.SetDNSConfigResponse], error)
+	GetIAMPolicy(context.Context, *connect.Request[v1.GetIAMPolicyRequest]) (*connect.Response[v1.GetIAMPolicyResponse], error)
+	SetIAMPolicy(context.Context, *connect.Request[v1.SetIAMPolicyRequest]) (*connect.Response[v1.SetIAMPolicyResponse], error)
+	GetACLPolicy(context.Context, *connect.Request[v1.GetACLPolicyRequest]) (*connect.Response[v1.GetACLPolicyResponse], error)
+	SetACLPolicy(context.Context, *connect.Request[v1.SetACLPolicyRequest]) (*connect.Response[v1.SetACLPolicyResponse], error)
+	GetAuthKey(context.Context, *connect.Request[v1.GetAuthKeyRequest]) (*connect.Response[v1.GetAuthKeyResponse], error)
+	CreateAuthKey(context.Context, *connect.Request[v1.CreateAuthKeyRequest]) (*connect.Response[v1.CreateAuthKeyResponse], error)
+	DeleteAuthKey(context.Context, *connect.Request[v1.DeleteAuthKeyRequest]) (*connect.Response[v1.DeleteAuthKeyResponse], error)
+	ListAuthKeys(context.Context, *connect.Request[v1.ListAuthKeysRequest]) (*connect.Response[v1.ListAuthKeysResponse], error)
+	ListUsers(context.Context, *connect.Request[v1.ListUsersRequest]) (*connect.Response[v1.ListUsersResponse], error)
+	DeleteUser(context.Context, *connect.Request[v1.DeleteUserRequest]) (*connect.Response[v1.DeleteUserResponse], error)
+	GetMachine(context.Context, *connect.Request[v1.GetMachineRequest]) (*connect.Response[v1.GetMachineResponse], error)
+	ListMachines(context.Context, *connect.Request[v1.ListMachinesRequest]) (*connect.Response[v1.ListMachinesResponse], error)
+	AuthorizeMachine(context.Context, *connect.Request[v1.AuthorizeMachineRequest]) (*connect.Response[v1.AuthorizeMachineResponse], error)
+	RenameMachine(context.Context, *connect.Request[v1.RenameMachineRequest]) (*connect.Response[v1.RenameMachineResponse], error)
+	ExpireMachine(context.Context, *connect.Request[v1.ExpireMachineRequest]) (*connect.Response[v1.ExpireMachineResponse], error)
+	DeleteMachine(context.Context, *connect.Request[v1.DeleteMachineRequest]) (*connect.Response[v1.DeleteMachineResponse], error)
+	SetMachineKeyExpiry(context.Context, *connect.Request[v1.SetMachineKeyExpiryRequest]) (*connect.Response[v1.SetMachineKeyExpiryResponse], error)
+	GetMachineRoutes(context.Context, *connect.Request[v1.GetMachineRoutesRequest]) (*connect.Response[v1.GetMachineRoutesResponse], error)
+	EnableMachineRoutes(context.Context, *connect.Request[v1.EnableMachineRoutesRequest]) (*connect.Response[v1.EnableMachineRoutesResponse], error)
+	DisableMachineRoutes(context.Context, *connect.Request[v1.DisableMachineRoutesRequest]) (*connect.Response[v1.DisableMachineRoutesResponse], error)
+	EnableExitNode(context.Context, *connect.Request[v1.EnableExitNodeRequest]) (*connect.Response[v1.EnableExitNodeResponse], error)
+	DisableExitNode(context.Context, *connect.Request[v1.DisableExitNodeRequest]) (*connect.Response[v1.DisableExitNodeResponse], error)
+	ToggleAutoNameMachine(context.Context, *connect.Request[v1.ToggleAutoNameMachineRequest]) (*connect.Response[v1.ToggleAutoNameMachineResponse], error)
 }
 
 // NewIonscaleServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -769,226 +862,270 @@ type IonscaleServiceHandler interface {
 //
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
-func NewIonscaleServiceHandler(svc IonscaleServiceHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
-	ionscaleServiceGetVersionHandler := connect_go.NewUnaryHandler(
+func NewIonscaleServiceHandler(svc IonscaleServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	ionscaleServiceGetVersionHandler := connect.NewUnaryHandler(
 		IonscaleServiceGetVersionProcedure,
 		svc.GetVersion,
-		opts...,
+		connect.WithSchema(ionscaleServiceGetVersionMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceAuthenticateHandler := connect_go.NewServerStreamHandler(
+	ionscaleServiceAuthenticateHandler := connect.NewServerStreamHandler(
 		IonscaleServiceAuthenticateProcedure,
 		svc.Authenticate,
-		opts...,
+		connect.WithSchema(ionscaleServiceAuthenticateMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceGetDefaultDERPMapHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceGetDefaultDERPMapHandler := connect.NewUnaryHandler(
 		IonscaleServiceGetDefaultDERPMapProcedure,
 		svc.GetDefaultDERPMap,
-		opts...,
+		connect.WithSchema(ionscaleServiceGetDefaultDERPMapMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceCreateTailnetHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceCreateTailnetHandler := connect.NewUnaryHandler(
 		IonscaleServiceCreateTailnetProcedure,
 		svc.CreateTailnet,
-		opts...,
+		connect.WithSchema(ionscaleServiceCreateTailnetMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceUpdateTailnetHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceUpdateTailnetHandler := connect.NewUnaryHandler(
 		IonscaleServiceUpdateTailnetProcedure,
 		svc.UpdateTailnet,
-		opts...,
+		connect.WithSchema(ionscaleServiceUpdateTailnetMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceGetTailnetHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceGetTailnetHandler := connect.NewUnaryHandler(
 		IonscaleServiceGetTailnetProcedure,
 		svc.GetTailnet,
-		opts...,
+		connect.WithSchema(ionscaleServiceGetTailnetMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceListTailnetsHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceListTailnetsHandler := connect.NewUnaryHandler(
 		IonscaleServiceListTailnetsProcedure,
 		svc.ListTailnets,
-		opts...,
+		connect.WithSchema(ionscaleServiceListTailnetsMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceDeleteTailnetHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceDeleteTailnetHandler := connect.NewUnaryHandler(
 		IonscaleServiceDeleteTailnetProcedure,
 		svc.DeleteTailnet,
-		opts...,
+		connect.WithSchema(ionscaleServiceDeleteTailnetMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceGetDERPMapHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceGetDERPMapHandler := connect.NewUnaryHandler(
 		IonscaleServiceGetDERPMapProcedure,
 		svc.GetDERPMap,
-		opts...,
+		connect.WithSchema(ionscaleServiceGetDERPMapMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceSetDERPMapHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceSetDERPMapHandler := connect.NewUnaryHandler(
 		IonscaleServiceSetDERPMapProcedure,
 		svc.SetDERPMap,
-		opts...,
+		connect.WithSchema(ionscaleServiceSetDERPMapMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceResetDERPMapHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceResetDERPMapHandler := connect.NewUnaryHandler(
 		IonscaleServiceResetDERPMapProcedure,
 		svc.ResetDERPMap,
-		opts...,
+		connect.WithSchema(ionscaleServiceResetDERPMapMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceEnableFileSharingHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceEnableFileSharingHandler := connect.NewUnaryHandler(
 		IonscaleServiceEnableFileSharingProcedure,
 		svc.EnableFileSharing,
-		opts...,
+		connect.WithSchema(ionscaleServiceEnableFileSharingMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceDisableFileSharingHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceDisableFileSharingHandler := connect.NewUnaryHandler(
 		IonscaleServiceDisableFileSharingProcedure,
 		svc.DisableFileSharing,
-		opts...,
+		connect.WithSchema(ionscaleServiceDisableFileSharingMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceEnableServiceCollectionHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceEnableServiceCollectionHandler := connect.NewUnaryHandler(
 		IonscaleServiceEnableServiceCollectionProcedure,
 		svc.EnableServiceCollection,
-		opts...,
+		connect.WithSchema(ionscaleServiceEnableServiceCollectionMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceDisableServiceCollectionHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceDisableServiceCollectionHandler := connect.NewUnaryHandler(
 		IonscaleServiceDisableServiceCollectionProcedure,
 		svc.DisableServiceCollection,
-		opts...,
+		connect.WithSchema(ionscaleServiceDisableServiceCollectionMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceEnableSSHHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceEnableSSHHandler := connect.NewUnaryHandler(
 		IonscaleServiceEnableSSHProcedure,
 		svc.EnableSSH,
-		opts...,
+		connect.WithSchema(ionscaleServiceEnableSSHMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceDisableSSHHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceDisableSSHHandler := connect.NewUnaryHandler(
 		IonscaleServiceDisableSSHProcedure,
 		svc.DisableSSH,
-		opts...,
+		connect.WithSchema(ionscaleServiceDisableSSHMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceEnableMachineAuthorizationHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceEnableMachineAuthorizationHandler := connect.NewUnaryHandler(
 		IonscaleServiceEnableMachineAuthorizationProcedure,
 		svc.EnableMachineAuthorization,
-		opts...,
+		connect.WithSchema(ionscaleServiceEnableMachineAuthorizationMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceDisableMachineAuthorizationHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceDisableMachineAuthorizationHandler := connect.NewUnaryHandler(
 		IonscaleServiceDisableMachineAuthorizationProcedure,
 		svc.DisableMachineAuthorization,
-		opts...,
+		connect.WithSchema(ionscaleServiceDisableMachineAuthorizationMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceGetDNSConfigHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceGetDNSConfigHandler := connect.NewUnaryHandler(
 		IonscaleServiceGetDNSConfigProcedure,
 		svc.GetDNSConfig,
-		opts...,
+		connect.WithSchema(ionscaleServiceGetDNSConfigMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceSetDNSConfigHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceSetDNSConfigHandler := connect.NewUnaryHandler(
 		IonscaleServiceSetDNSConfigProcedure,
 		svc.SetDNSConfig,
-		opts...,
+		connect.WithSchema(ionscaleServiceSetDNSConfigMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceGetIAMPolicyHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceGetIAMPolicyHandler := connect.NewUnaryHandler(
 		IonscaleServiceGetIAMPolicyProcedure,
 		svc.GetIAMPolicy,
-		opts...,
+		connect.WithSchema(ionscaleServiceGetIAMPolicyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceSetIAMPolicyHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceSetIAMPolicyHandler := connect.NewUnaryHandler(
 		IonscaleServiceSetIAMPolicyProcedure,
 		svc.SetIAMPolicy,
-		opts...,
+		connect.WithSchema(ionscaleServiceSetIAMPolicyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceGetACLPolicyHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceGetACLPolicyHandler := connect.NewUnaryHandler(
 		IonscaleServiceGetACLPolicyProcedure,
 		svc.GetACLPolicy,
-		opts...,
+		connect.WithSchema(ionscaleServiceGetACLPolicyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceSetACLPolicyHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceSetACLPolicyHandler := connect.NewUnaryHandler(
 		IonscaleServiceSetACLPolicyProcedure,
 		svc.SetACLPolicy,
-		opts...,
+		connect.WithSchema(ionscaleServiceSetACLPolicyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceGetAuthKeyHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceGetAuthKeyHandler := connect.NewUnaryHandler(
 		IonscaleServiceGetAuthKeyProcedure,
 		svc.GetAuthKey,
-		opts...,
+		connect.WithSchema(ionscaleServiceGetAuthKeyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceCreateAuthKeyHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceCreateAuthKeyHandler := connect.NewUnaryHandler(
 		IonscaleServiceCreateAuthKeyProcedure,
 		svc.CreateAuthKey,
-		opts...,
+		connect.WithSchema(ionscaleServiceCreateAuthKeyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceDeleteAuthKeyHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceDeleteAuthKeyHandler := connect.NewUnaryHandler(
 		IonscaleServiceDeleteAuthKeyProcedure,
 		svc.DeleteAuthKey,
-		opts...,
+		connect.WithSchema(ionscaleServiceDeleteAuthKeyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceListAuthKeysHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceListAuthKeysHandler := connect.NewUnaryHandler(
 		IonscaleServiceListAuthKeysProcedure,
 		svc.ListAuthKeys,
-		opts...,
+		connect.WithSchema(ionscaleServiceListAuthKeysMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceListUsersHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceListUsersHandler := connect.NewUnaryHandler(
 		IonscaleServiceListUsersProcedure,
 		svc.ListUsers,
-		opts...,
+		connect.WithSchema(ionscaleServiceListUsersMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceDeleteUserHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceDeleteUserHandler := connect.NewUnaryHandler(
 		IonscaleServiceDeleteUserProcedure,
 		svc.DeleteUser,
-		opts...,
+		connect.WithSchema(ionscaleServiceDeleteUserMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceGetMachineHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceGetMachineHandler := connect.NewUnaryHandler(
 		IonscaleServiceGetMachineProcedure,
 		svc.GetMachine,
-		opts...,
+		connect.WithSchema(ionscaleServiceGetMachineMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceListMachinesHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceListMachinesHandler := connect.NewUnaryHandler(
 		IonscaleServiceListMachinesProcedure,
 		svc.ListMachines,
-		opts...,
+		connect.WithSchema(ionscaleServiceListMachinesMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceAuthorizeMachineHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceAuthorizeMachineHandler := connect.NewUnaryHandler(
 		IonscaleServiceAuthorizeMachineProcedure,
 		svc.AuthorizeMachine,
-		opts...,
+		connect.WithSchema(ionscaleServiceAuthorizeMachineMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceRenameMachineHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceRenameMachineHandler := connect.NewUnaryHandler(
 		IonscaleServiceRenameMachineProcedure,
 		svc.RenameMachine,
-		opts...,
+		connect.WithSchema(ionscaleServiceRenameMachineMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceExpireMachineHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceExpireMachineHandler := connect.NewUnaryHandler(
 		IonscaleServiceExpireMachineProcedure,
 		svc.ExpireMachine,
-		opts...,
+		connect.WithSchema(ionscaleServiceExpireMachineMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceDeleteMachineHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceDeleteMachineHandler := connect.NewUnaryHandler(
 		IonscaleServiceDeleteMachineProcedure,
 		svc.DeleteMachine,
-		opts...,
+		connect.WithSchema(ionscaleServiceDeleteMachineMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceSetMachineKeyExpiryHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceSetMachineKeyExpiryHandler := connect.NewUnaryHandler(
 		IonscaleServiceSetMachineKeyExpiryProcedure,
 		svc.SetMachineKeyExpiry,
-		opts...,
+		connect.WithSchema(ionscaleServiceSetMachineKeyExpiryMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceGetMachineRoutesHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceGetMachineRoutesHandler := connect.NewUnaryHandler(
 		IonscaleServiceGetMachineRoutesProcedure,
 		svc.GetMachineRoutes,
-		opts...,
+		connect.WithSchema(ionscaleServiceGetMachineRoutesMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceEnableMachineRoutesHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceEnableMachineRoutesHandler := connect.NewUnaryHandler(
 		IonscaleServiceEnableMachineRoutesProcedure,
 		svc.EnableMachineRoutes,
-		opts...,
+		connect.WithSchema(ionscaleServiceEnableMachineRoutesMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceDisableMachineRoutesHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceDisableMachineRoutesHandler := connect.NewUnaryHandler(
 		IonscaleServiceDisableMachineRoutesProcedure,
 		svc.DisableMachineRoutes,
-		opts...,
+		connect.WithSchema(ionscaleServiceDisableMachineRoutesMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceEnableExitNodeHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceEnableExitNodeHandler := connect.NewUnaryHandler(
 		IonscaleServiceEnableExitNodeProcedure,
 		svc.EnableExitNode,
-		opts...,
+		connect.WithSchema(ionscaleServiceEnableExitNodeMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceDisableExitNodeHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceDisableExitNodeHandler := connect.NewUnaryHandler(
 		IonscaleServiceDisableExitNodeProcedure,
 		svc.DisableExitNode,
-		opts...,
+		connect.WithSchema(ionscaleServiceDisableExitNodeMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
-	ionscaleServiceToggleAutoNameMachineHandler := connect_go.NewUnaryHandler(
+	ionscaleServiceToggleAutoNameMachineHandler := connect.NewUnaryHandler(
 		IonscaleServiceToggleAutoNameMachineProcedure,
 		svc.ToggleAutoNameMachine,
-		opts...,
+		connect.WithSchema(ionscaleServiceToggleAutoNameMachineMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
 	return "/ionscale.v1.IonscaleService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
@@ -1089,178 +1226,178 @@ func NewIonscaleServiceHandler(svc IonscaleServiceHandler, opts ...connect_go.Ha
 // UnimplementedIonscaleServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedIonscaleServiceHandler struct{}
 
-func (UnimplementedIonscaleServiceHandler) GetVersion(context.Context, *connect_go.Request[v1.GetVersionRequest]) (*connect_go.Response[v1.GetVersionResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetVersion is not implemented"))
+func (UnimplementedIonscaleServiceHandler) GetVersion(context.Context, *connect.Request[v1.GetVersionRequest]) (*connect.Response[v1.GetVersionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetVersion is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) Authenticate(context.Context, *connect_go.Request[v1.AuthenticateRequest], *connect_go.ServerStream[v1.AuthenticateResponse]) error {
-	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.Authenticate is not implemented"))
+func (UnimplementedIonscaleServiceHandler) Authenticate(context.Context, *connect.Request[v1.AuthenticateRequest], *connect.ServerStream[v1.AuthenticateResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.Authenticate is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) GetDefaultDERPMap(context.Context, *connect_go.Request[v1.GetDefaultDERPMapRequest]) (*connect_go.Response[v1.GetDefaultDERPMapResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetDefaultDERPMap is not implemented"))
+func (UnimplementedIonscaleServiceHandler) GetDefaultDERPMap(context.Context, *connect.Request[v1.GetDefaultDERPMapRequest]) (*connect.Response[v1.GetDefaultDERPMapResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetDefaultDERPMap is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) CreateTailnet(context.Context, *connect_go.Request[v1.CreateTailnetRequest]) (*connect_go.Response[v1.CreateTailnetResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.CreateTailnet is not implemented"))
+func (UnimplementedIonscaleServiceHandler) CreateTailnet(context.Context, *connect.Request[v1.CreateTailnetRequest]) (*connect.Response[v1.CreateTailnetResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.CreateTailnet is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) UpdateTailnet(context.Context, *connect_go.Request[v1.UpdateTailnetRequest]) (*connect_go.Response[v1.UpdateTailnetResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.UpdateTailnet is not implemented"))
+func (UnimplementedIonscaleServiceHandler) UpdateTailnet(context.Context, *connect.Request[v1.UpdateTailnetRequest]) (*connect.Response[v1.UpdateTailnetResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.UpdateTailnet is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) GetTailnet(context.Context, *connect_go.Request[v1.GetTailnetRequest]) (*connect_go.Response[v1.GetTailnetResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetTailnet is not implemented"))
+func (UnimplementedIonscaleServiceHandler) GetTailnet(context.Context, *connect.Request[v1.GetTailnetRequest]) (*connect.Response[v1.GetTailnetResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetTailnet is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) ListTailnets(context.Context, *connect_go.Request[v1.ListTailnetsRequest]) (*connect_go.Response[v1.ListTailnetsResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ListTailnets is not implemented"))
+func (UnimplementedIonscaleServiceHandler) ListTailnets(context.Context, *connect.Request[v1.ListTailnetsRequest]) (*connect.Response[v1.ListTailnetsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ListTailnets is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) DeleteTailnet(context.Context, *connect_go.Request[v1.DeleteTailnetRequest]) (*connect_go.Response[v1.DeleteTailnetResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DeleteTailnet is not implemented"))
+func (UnimplementedIonscaleServiceHandler) DeleteTailnet(context.Context, *connect.Request[v1.DeleteTailnetRequest]) (*connect.Response[v1.DeleteTailnetResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DeleteTailnet is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) GetDERPMap(context.Context, *connect_go.Request[v1.GetDERPMapRequest]) (*connect_go.Response[v1.GetDERPMapResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetDERPMap is not implemented"))
+func (UnimplementedIonscaleServiceHandler) GetDERPMap(context.Context, *connect.Request[v1.GetDERPMapRequest]) (*connect.Response[v1.GetDERPMapResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetDERPMap is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) SetDERPMap(context.Context, *connect_go.Request[v1.SetDERPMapRequest]) (*connect_go.Response[v1.SetDERPMapResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.SetDERPMap is not implemented"))
+func (UnimplementedIonscaleServiceHandler) SetDERPMap(context.Context, *connect.Request[v1.SetDERPMapRequest]) (*connect.Response[v1.SetDERPMapResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.SetDERPMap is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) ResetDERPMap(context.Context, *connect_go.Request[v1.ResetDERPMapRequest]) (*connect_go.Response[v1.ResetDERPMapResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ResetDERPMap is not implemented"))
+func (UnimplementedIonscaleServiceHandler) ResetDERPMap(context.Context, *connect.Request[v1.ResetDERPMapRequest]) (*connect.Response[v1.ResetDERPMapResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ResetDERPMap is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) EnableFileSharing(context.Context, *connect_go.Request[v1.EnableFileSharingRequest]) (*connect_go.Response[v1.EnableFileSharingResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableFileSharing is not implemented"))
+func (UnimplementedIonscaleServiceHandler) EnableFileSharing(context.Context, *connect.Request[v1.EnableFileSharingRequest]) (*connect.Response[v1.EnableFileSharingResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableFileSharing is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) DisableFileSharing(context.Context, *connect_go.Request[v1.DisableFileSharingRequest]) (*connect_go.Response[v1.DisableFileSharingResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableFileSharing is not implemented"))
+func (UnimplementedIonscaleServiceHandler) DisableFileSharing(context.Context, *connect.Request[v1.DisableFileSharingRequest]) (*connect.Response[v1.DisableFileSharingResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableFileSharing is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) EnableServiceCollection(context.Context, *connect_go.Request[v1.EnableServiceCollectionRequest]) (*connect_go.Response[v1.EnableServiceCollectionResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableServiceCollection is not implemented"))
+func (UnimplementedIonscaleServiceHandler) EnableServiceCollection(context.Context, *connect.Request[v1.EnableServiceCollectionRequest]) (*connect.Response[v1.EnableServiceCollectionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableServiceCollection is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) DisableServiceCollection(context.Context, *connect_go.Request[v1.DisableServiceCollectionRequest]) (*connect_go.Response[v1.DisableServiceCollectionResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableServiceCollection is not implemented"))
+func (UnimplementedIonscaleServiceHandler) DisableServiceCollection(context.Context, *connect.Request[v1.DisableServiceCollectionRequest]) (*connect.Response[v1.DisableServiceCollectionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableServiceCollection is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) EnableSSH(context.Context, *connect_go.Request[v1.EnableSSHRequest]) (*connect_go.Response[v1.EnableSSHResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableSSH is not implemented"))
+func (UnimplementedIonscaleServiceHandler) EnableSSH(context.Context, *connect.Request[v1.EnableSSHRequest]) (*connect.Response[v1.EnableSSHResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableSSH is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) DisableSSH(context.Context, *connect_go.Request[v1.DisableSSHRequest]) (*connect_go.Response[v1.DisableSSHResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableSSH is not implemented"))
+func (UnimplementedIonscaleServiceHandler) DisableSSH(context.Context, *connect.Request[v1.DisableSSHRequest]) (*connect.Response[v1.DisableSSHResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableSSH is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) EnableMachineAuthorization(context.Context, *connect_go.Request[v1.EnableMachineAuthorizationRequest]) (*connect_go.Response[v1.EnableMachineAuthorizationResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableMachineAuthorization is not implemented"))
+func (UnimplementedIonscaleServiceHandler) EnableMachineAuthorization(context.Context, *connect.Request[v1.EnableMachineAuthorizationRequest]) (*connect.Response[v1.EnableMachineAuthorizationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableMachineAuthorization is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) DisableMachineAuthorization(context.Context, *connect_go.Request[v1.DisableMachineAuthorizationRequest]) (*connect_go.Response[v1.DisableMachineAuthorizationResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableMachineAuthorization is not implemented"))
+func (UnimplementedIonscaleServiceHandler) DisableMachineAuthorization(context.Context, *connect.Request[v1.DisableMachineAuthorizationRequest]) (*connect.Response[v1.DisableMachineAuthorizationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableMachineAuthorization is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) GetDNSConfig(context.Context, *connect_go.Request[v1.GetDNSConfigRequest]) (*connect_go.Response[v1.GetDNSConfigResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetDNSConfig is not implemented"))
+func (UnimplementedIonscaleServiceHandler) GetDNSConfig(context.Context, *connect.Request[v1.GetDNSConfigRequest]) (*connect.Response[v1.GetDNSConfigResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetDNSConfig is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) SetDNSConfig(context.Context, *connect_go.Request[v1.SetDNSConfigRequest]) (*connect_go.Response[v1.SetDNSConfigResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.SetDNSConfig is not implemented"))
+func (UnimplementedIonscaleServiceHandler) SetDNSConfig(context.Context, *connect.Request[v1.SetDNSConfigRequest]) (*connect.Response[v1.SetDNSConfigResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.SetDNSConfig is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) GetIAMPolicy(context.Context, *connect_go.Request[v1.GetIAMPolicyRequest]) (*connect_go.Response[v1.GetIAMPolicyResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetIAMPolicy is not implemented"))
+func (UnimplementedIonscaleServiceHandler) GetIAMPolicy(context.Context, *connect.Request[v1.GetIAMPolicyRequest]) (*connect.Response[v1.GetIAMPolicyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetIAMPolicy is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) SetIAMPolicy(context.Context, *connect_go.Request[v1.SetIAMPolicyRequest]) (*connect_go.Response[v1.SetIAMPolicyResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.SetIAMPolicy is not implemented"))
+func (UnimplementedIonscaleServiceHandler) SetIAMPolicy(context.Context, *connect.Request[v1.SetIAMPolicyRequest]) (*connect.Response[v1.SetIAMPolicyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.SetIAMPolicy is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) GetACLPolicy(context.Context, *connect_go.Request[v1.GetACLPolicyRequest]) (*connect_go.Response[v1.GetACLPolicyResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetACLPolicy is not implemented"))
+func (UnimplementedIonscaleServiceHandler) GetACLPolicy(context.Context, *connect.Request[v1.GetACLPolicyRequest]) (*connect.Response[v1.GetACLPolicyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetACLPolicy is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) SetACLPolicy(context.Context, *connect_go.Request[v1.SetACLPolicyRequest]) (*connect_go.Response[v1.SetACLPolicyResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.SetACLPolicy is not implemented"))
+func (UnimplementedIonscaleServiceHandler) SetACLPolicy(context.Context, *connect.Request[v1.SetACLPolicyRequest]) (*connect.Response[v1.SetACLPolicyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.SetACLPolicy is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) GetAuthKey(context.Context, *connect_go.Request[v1.GetAuthKeyRequest]) (*connect_go.Response[v1.GetAuthKeyResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetAuthKey is not implemented"))
+func (UnimplementedIonscaleServiceHandler) GetAuthKey(context.Context, *connect.Request[v1.GetAuthKeyRequest]) (*connect.Response[v1.GetAuthKeyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetAuthKey is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) CreateAuthKey(context.Context, *connect_go.Request[v1.CreateAuthKeyRequest]) (*connect_go.Response[v1.CreateAuthKeyResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.CreateAuthKey is not implemented"))
+func (UnimplementedIonscaleServiceHandler) CreateAuthKey(context.Context, *connect.Request[v1.CreateAuthKeyRequest]) (*connect.Response[v1.CreateAuthKeyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.CreateAuthKey is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) DeleteAuthKey(context.Context, *connect_go.Request[v1.DeleteAuthKeyRequest]) (*connect_go.Response[v1.DeleteAuthKeyResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DeleteAuthKey is not implemented"))
+func (UnimplementedIonscaleServiceHandler) DeleteAuthKey(context.Context, *connect.Request[v1.DeleteAuthKeyRequest]) (*connect.Response[v1.DeleteAuthKeyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DeleteAuthKey is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) ListAuthKeys(context.Context, *connect_go.Request[v1.ListAuthKeysRequest]) (*connect_go.Response[v1.ListAuthKeysResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ListAuthKeys is not implemented"))
+func (UnimplementedIonscaleServiceHandler) ListAuthKeys(context.Context, *connect.Request[v1.ListAuthKeysRequest]) (*connect.Response[v1.ListAuthKeysResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ListAuthKeys is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) ListUsers(context.Context, *connect_go.Request[v1.ListUsersRequest]) (*connect_go.Response[v1.ListUsersResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ListUsers is not implemented"))
+func (UnimplementedIonscaleServiceHandler) ListUsers(context.Context, *connect.Request[v1.ListUsersRequest]) (*connect.Response[v1.ListUsersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ListUsers is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) DeleteUser(context.Context, *connect_go.Request[v1.DeleteUserRequest]) (*connect_go.Response[v1.DeleteUserResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DeleteUser is not implemented"))
+func (UnimplementedIonscaleServiceHandler) DeleteUser(context.Context, *connect.Request[v1.DeleteUserRequest]) (*connect.Response[v1.DeleteUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DeleteUser is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) GetMachine(context.Context, *connect_go.Request[v1.GetMachineRequest]) (*connect_go.Response[v1.GetMachineResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetMachine is not implemented"))
+func (UnimplementedIonscaleServiceHandler) GetMachine(context.Context, *connect.Request[v1.GetMachineRequest]) (*connect.Response[v1.GetMachineResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetMachine is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) ListMachines(context.Context, *connect_go.Request[v1.ListMachinesRequest]) (*connect_go.Response[v1.ListMachinesResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ListMachines is not implemented"))
+func (UnimplementedIonscaleServiceHandler) ListMachines(context.Context, *connect.Request[v1.ListMachinesRequest]) (*connect.Response[v1.ListMachinesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ListMachines is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) AuthorizeMachine(context.Context, *connect_go.Request[v1.AuthorizeMachineRequest]) (*connect_go.Response[v1.AuthorizeMachineResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.AuthorizeMachine is not implemented"))
+func (UnimplementedIonscaleServiceHandler) AuthorizeMachine(context.Context, *connect.Request[v1.AuthorizeMachineRequest]) (*connect.Response[v1.AuthorizeMachineResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.AuthorizeMachine is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) RenameMachine(context.Context, *connect_go.Request[v1.RenameMachineRequest]) (*connect_go.Response[v1.RenameMachineResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.RenameMachine is not implemented"))
+func (UnimplementedIonscaleServiceHandler) RenameMachine(context.Context, *connect.Request[v1.RenameMachineRequest]) (*connect.Response[v1.RenameMachineResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.RenameMachine is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) ExpireMachine(context.Context, *connect_go.Request[v1.ExpireMachineRequest]) (*connect_go.Response[v1.ExpireMachineResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ExpireMachine is not implemented"))
+func (UnimplementedIonscaleServiceHandler) ExpireMachine(context.Context, *connect.Request[v1.ExpireMachineRequest]) (*connect.Response[v1.ExpireMachineResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ExpireMachine is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) DeleteMachine(context.Context, *connect_go.Request[v1.DeleteMachineRequest]) (*connect_go.Response[v1.DeleteMachineResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DeleteMachine is not implemented"))
+func (UnimplementedIonscaleServiceHandler) DeleteMachine(context.Context, *connect.Request[v1.DeleteMachineRequest]) (*connect.Response[v1.DeleteMachineResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DeleteMachine is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) SetMachineKeyExpiry(context.Context, *connect_go.Request[v1.SetMachineKeyExpiryRequest]) (*connect_go.Response[v1.SetMachineKeyExpiryResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.SetMachineKeyExpiry is not implemented"))
+func (UnimplementedIonscaleServiceHandler) SetMachineKeyExpiry(context.Context, *connect.Request[v1.SetMachineKeyExpiryRequest]) (*connect.Response[v1.SetMachineKeyExpiryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.SetMachineKeyExpiry is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) GetMachineRoutes(context.Context, *connect_go.Request[v1.GetMachineRoutesRequest]) (*connect_go.Response[v1.GetMachineRoutesResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetMachineRoutes is not implemented"))
+func (UnimplementedIonscaleServiceHandler) GetMachineRoutes(context.Context, *connect.Request[v1.GetMachineRoutesRequest]) (*connect.Response[v1.GetMachineRoutesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.GetMachineRoutes is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) EnableMachineRoutes(context.Context, *connect_go.Request[v1.EnableMachineRoutesRequest]) (*connect_go.Response[v1.EnableMachineRoutesResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableMachineRoutes is not implemented"))
+func (UnimplementedIonscaleServiceHandler) EnableMachineRoutes(context.Context, *connect.Request[v1.EnableMachineRoutesRequest]) (*connect.Response[v1.EnableMachineRoutesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableMachineRoutes is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) DisableMachineRoutes(context.Context, *connect_go.Request[v1.DisableMachineRoutesRequest]) (*connect_go.Response[v1.DisableMachineRoutesResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableMachineRoutes is not implemented"))
+func (UnimplementedIonscaleServiceHandler) DisableMachineRoutes(context.Context, *connect.Request[v1.DisableMachineRoutesRequest]) (*connect.Response[v1.DisableMachineRoutesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableMachineRoutes is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) EnableExitNode(context.Context, *connect_go.Request[v1.EnableExitNodeRequest]) (*connect_go.Response[v1.EnableExitNodeResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableExitNode is not implemented"))
+func (UnimplementedIonscaleServiceHandler) EnableExitNode(context.Context, *connect.Request[v1.EnableExitNodeRequest]) (*connect.Response[v1.EnableExitNodeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.EnableExitNode is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) DisableExitNode(context.Context, *connect_go.Request[v1.DisableExitNodeRequest]) (*connect_go.Response[v1.DisableExitNodeResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableExitNode is not implemented"))
+func (UnimplementedIonscaleServiceHandler) DisableExitNode(context.Context, *connect.Request[v1.DisableExitNodeRequest]) (*connect.Response[v1.DisableExitNodeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.DisableExitNode is not implemented"))
 }
 
-func (UnimplementedIonscaleServiceHandler) ToggleAutoNameMachine(context.Context, *connect_go.Request[v1.ToggleAutoNameMachineRequest]) (*connect_go.Response[v1.ToggleAutoNameMachineResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ToggleAutoNameMachine is not implemented"))
+func (UnimplementedIonscaleServiceHandler) ToggleAutoNameMachine(context.Context, *connect.Request[v1.ToggleAutoNameMachineRequest]) (*connect.Response[v1.ToggleAutoNameMachineResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("ionscale.v1.IonscaleService.ToggleAutoNameMachine is not implemented"))
 }

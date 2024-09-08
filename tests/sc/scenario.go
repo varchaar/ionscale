@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/bufbuild/connect-go"
+	"connectrpc.com/connect"
 	petname "github.com/dustinkirkland/golang-petname"
 	ionscaleclt "github.com/jsiebens/ionscale/pkg/client/ionscale"
 	api "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1"

@@ -3,7 +3,7 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"github.com/bufbuild/connect-go"
+	"connectrpc.com/connect"
 	"github.com/jsiebens/go-edit/editor"
 	api "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1"
 	"github.com/spf13/cobra"

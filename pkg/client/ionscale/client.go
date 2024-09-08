@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/bufbuild/connect-go"
+	"connectrpc.com/connect"
 	api "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1/ionscalev1connect"
 	"net/http"
 )

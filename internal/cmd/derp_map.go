@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bufbuild/connect-go"
+	"connectrpc.com/connect"
 	api "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"

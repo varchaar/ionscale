@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/bufbuild/connect-go"
+	"connectrpc.com/connect"
 	api "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1"
 	"github.com/nleeper/goment"
 	"github.com/rodaine/table"

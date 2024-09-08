@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bufbuild/connect-go"
+	"connectrpc.com/connect"
 	idomain "github.com/jsiebens/ionscale/internal/domain"
 	"github.com/jsiebens/ionscale/pkg/client/ionscale"
 	"github.com/jsiebens/ionscale/pkg/defaults"

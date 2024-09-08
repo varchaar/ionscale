@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/bufbuild/connect-go"
+	"connectrpc.com/connect"
 	"github.com/jsiebens/ionscale/internal/domain"
 	"github.com/jsiebens/ionscale/internal/util"
 	"github.com/jsiebens/ionscale/pkg/defaults"

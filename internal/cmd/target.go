@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/bufbuild/connect-go"
+	"connectrpc.com/connect"
 	"github.com/jsiebens/ionscale/internal/config"
 	"github.com/jsiebens/ionscale/pkg/client/ionscale"
 	ionscalev1 "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1"

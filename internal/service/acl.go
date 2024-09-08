@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/bufbuild/connect-go"
+	"connectrpc.com/connect"
 	"github.com/jsiebens/ionscale/internal/domain"
 	api "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1"
 )
