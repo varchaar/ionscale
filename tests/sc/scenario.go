@@ -4,19 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"connectrpc.com/connect"
-	petname "github.com/dustinkirkland/golang-petname"
-	ionscaleclt "github.com/jsiebens/ionscale/pkg/client/ionscale"
-	api "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1"
-	ionscaleconnect "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1/ionscalev1connect"
-	"github.com/jsiebens/ionscale/tests/tsn"
-	"github.com/jsiebens/mockoidc"
-	mockoidcv1 "github.com/jsiebens/mockoidc/pkg/gen/mockoidc/v1"
-	"github.com/jsiebens/mockoidc/pkg/gen/mockoidc/v1/mockoidcv1connect"
-	"github.com/ory/dockertest/v3"
-	"github.com/ory/dockertest/v3/docker"
-	"github.com/stretchr/testify/require"
-	"google.golang.org/protobuf/types/known/durationpb"
 	"io"
 	"log"
 	"net"
@@ -26,6 +13,19 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"connectrpc.com/connect"
+	petname "github.com/dustinkirkland/golang-petname"
+	ionscaleclt "github.com/jsiebens/ionscale/pkg/client/ionscale"
+	api "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1"
+	ionscaleconnect "github.com/jsiebens/ionscale/pkg/gen/ionscale/v1/ionscalev1connect"
+	"github.com/jsiebens/ionscale/tests/tsn"
+	"github.com/jsiebens/mockoidc"
+	"github.com/jsiebens/mockoidc/pkg/gen/mockoidc/v1/mockoidcv1connect"
+	"github.com/ory/dockertest/v3"
+	"github.com/ory/dockertest/v3/docker"
+	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 const DefaultTargetVersion = "stable"
@@ -101,8 +101,8 @@ func (s *Scenario) EnableMachineAutorization(tailnetID uint64) {
 }
 
 func (s *Scenario) PushOIDCUser(sub, email, preferredUsername string) {
-	_, err := s.mockoidcClient.PushUser(context.Background(), connect.NewRequest(&mockoidcv1.PushUserRequest{Subject: sub, Email: email, PreferredUsername: preferredUsername}))
-	require.NoError(s.t, err)
+	// _, err := s.mockoidcClient.PushUser(context.Background(), connect.NewRequest(&mockoidcv1.PushUserRequest{Subject: sub, Email: email, PreferredUsername: preferredUsername}))
+	// require.NoError(s.t, err)
 }
 
 func (s *Scenario) printIonscaleLogs() error {

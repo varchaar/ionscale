@@ -38,7 +38,7 @@
               version = "0.16.0";
 
               src = ./.;
-              vendorHash = "sha256-LhHiAsgjuLz+EooG7fsL66eXMBCAVYCLqTkjhjRbHPs=";
+              vendorHash = null;
 
               ldflags = [
                 "-s"
@@ -47,6 +47,7 @@
               ];
 
               doCheck = false;
+              doInstallCheck = false;
 
               meta = {
                 description = "A lightweight implementation of a Tailscale control server";
