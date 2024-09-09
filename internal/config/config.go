@@ -3,6 +3,11 @@ package config
 import (
 	"encoding/base64"
 	"fmt"
+	"net/url"
+	"os"
+	"path/filepath"
+	"time"
+
 	"github.com/caarlos0/env/v6"
 	"github.com/caddyserver/certmagic"
 	"github.com/imdario/mergo"
@@ -11,12 +16,8 @@ import (
 	"github.com/jsiebens/ionscale/internal/util"
 	"github.com/mitchellh/go-homedir"
 	"gopkg.in/yaml.v3"
-	"net/url"
-	"os"
-	"path/filepath"
 	"tailscale.com/tailcfg"
 	tkey "tailscale.com/types/key"
-	"time"
 )
 
 const (
@@ -101,9 +102,10 @@ func LoadConfig(path string) (*Config, error) {
 
 func defaultConfig() *Config {
 	return &Config{
-		ListenAddr:        ":8080",
-		MetricsListenAddr: ":9091",
-		StunListenAddr:    ":3478",
+		ListenAddr:         ":8080",
+		CORSAllowedOrigins: []string{},
+		MetricsListenAddr:  ":9091",
+		StunListenAddr:     ":3478",
 		Database: Database{
 			Type:         "sqlite",
 			Url:          "./ionscale.db?_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)&_pragma=foreign_keys(ON)",
@@ -143,19 +145,20 @@ type ServerKeys struct {
 }
 
 type Config struct {
-	ListenAddr        string   `yaml:"listen_addr,omitempty" env:"LISTEN_ADDR"`
-	StunListenAddr    string   `yaml:"stun_listen_addr,omitempty" env:"STUN_LISTEN_ADDR"`
-	MetricsListenAddr string   `yaml:"metrics_listen_addr,omitempty" env:"METRICS_LISTEN_ADDR"`
-	PublicAddr        string   `yaml:"public_addr,omitempty" env:"PUBLIC_ADDR"`
-	StunPublicAddr    string   `yaml:"stun_public_addr,omitempty" env:"STUN_PUBLIC_ADDR"`
-	Tls               Tls      `yaml:"tls,omitempty" envPrefix:"TLS_"`
-	PollNet           PollNet  `yaml:"poll_net,omitempty" envPrefix:"POLL_NET_"`
-	Keys              Keys     `yaml:"keys,omitempty" envPrefix:"KEYS_"`
-	Database          Database `yaml:"database,omitempty" envPrefix:"DB_"`
-	Auth              Auth     `yaml:"auth,omitempty" envPrefix:"AUTH_"`
-	DNS               DNS      `yaml:"dns,omitempty"`
-	DERP              DERP     `yaml:"derp,omitempty" envPrefix:"DERP_"`
-	Logging           Logging  `yaml:"logging,omitempty" envPrefix:"LOGGING_"`
+	ListenAddr         string   `yaml:"listen_addr,omitempty" env:"LISTEN_ADDR"`
+	CORSAllowedOrigins []string `yaml:"cors_allowed_origins,omitempty" env:"CORS_ALLOWED_ORIGINS"`
+	StunListenAddr     string   `yaml:"stun_listen_addr,omitempty" env:"STUN_LISTEN_ADDR"`
+	MetricsListenAddr  string   `yaml:"metrics_listen_addr,omitempty" env:"METRICS_LISTEN_ADDR"`
+	PublicAddr         string   `yaml:"public_addr,omitempty" env:"PUBLIC_ADDR"`
+	StunPublicAddr     string   `yaml:"stun_public_addr,omitempty" env:"STUN_PUBLIC_ADDR"`
+	Tls                Tls      `yaml:"tls,omitempty" envPrefix:"TLS_"`
+	PollNet            PollNet  `yaml:"poll_net,omitempty" envPrefix:"POLL_NET_"`
+	Keys               Keys     `yaml:"keys,omitempty" envPrefix:"KEYS_"`
+	Database           Database `yaml:"database,omitempty" envPrefix:"DB_"`
+	Auth               Auth     `yaml:"auth,omitempty" envPrefix:"AUTH_"`
+	DNS                DNS      `yaml:"dns,omitempty"`
+	DERP               DERP     `yaml:"derp,omitempty" envPrefix:"DERP_"`
+	Logging            Logging  `yaml:"logging,omitempty" envPrefix:"LOGGING_"`
 
 	PublicUrl *url.URL `yaml:"-"`
 

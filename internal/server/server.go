@@ -5,6 +5,14 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	connectcors "connectrpc.com/cors"
 	"github.com/caddyserver/certmagic"
 	"github.com/jsiebens/ionscale/internal/auth"
 	"github.com/jsiebens/ionscale/internal/config"
@@ -21,19 +29,14 @@ import (
 	"github.com/labstack/echo-contrib/pprof"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/rs/cors"
 	certmagicsql "github.com/travisjeffery/certmagic-sqlstorage"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"golang.org/x/sync/errgroup"
-	"net"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 	"tailscale.com/types/key"
-	"time"
 )
 
 func Start(ctx context.Context, c *config.Config) error {
@@ -207,7 +210,7 @@ func Start(ctx context.Context, c *config.Config) error {
 		return logError(err)
 	}
 
-	webServer := &http.Server{ErrorLog: errorLog, Handler: h2c.NewHandler(webMux, &http2.Server{})}
+	webServer := &http.Server{ErrorLog: errorLog, Handler: h2c.NewHandler(withCORS(webMux, c), &http2.Server{})}
 	metricsServer := &http.Server{ErrorLog: errorLog, Handler: metricsMux}
 	stunServer := stunserver.New(stunL)
 
@@ -249,6 +252,31 @@ func Start(ctx context.Context, c *config.Config) error {
 	}
 
 	return g.Wait()
+}
+
+// withCORS adds CORS support to a Connect HTTP handler.
+func withCORS(h http.Handler, config *config.Config) http.Handler {
+	fmt.Printf("allowed origins %v\n", config.CORSAllowedOrigins)
+	middleware := cors.New(cors.Options{
+		AllowedOrigins: config.CORSAllowedOrigins,
+		// AllowOriginFunc: func(origin /* origin */ string) bool {
+		// 	// Allow all origins, which effectively disables CORS.
+		// 	fmt.Printf("origin received %s\n", origin)
+		// 	return true
+		// },
+		AllowedMethods: connectcors.AllowedMethods(),
+		AllowedHeaders: []string{
+			"Content-Type",             // for all protocols
+			"Connect-Protocol-Version", // for Connect
+			"Connect-Timeout-Ms",       // for Connect
+			"Grpc-Timeout",             // for gRPC-web
+			"X-Grpc-Web",               // for gRPC-web
+			"X-User-Agent",             // for all protocols
+			"Authorization",
+		},
+		ExposedHeaders: connectcors.ExposedHeaders(),
+	})
+	return middleware.Handler(h)
 }
 
 func serveHttp(s *http.Server, l net.Listener) error {
