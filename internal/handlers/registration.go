@@ -2,6 +2,10 @@ package handlers
 
 import (
 	"context"
+	"net/http"
+	"net/netip"
+	"time"
+
 	"github.com/jsiebens/ionscale/internal/addr"
 	"github.com/jsiebens/ionscale/internal/config"
 	"github.com/jsiebens/ionscale/internal/core"
@@ -9,19 +13,17 @@ import (
 	"github.com/jsiebens/ionscale/internal/mapping"
 	"github.com/jsiebens/ionscale/internal/util"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"net/netip"
 	"tailscale.com/tailcfg"
 	"tailscale.com/types/key"
 	"tailscale.com/util/dnsname"
-	"time"
 )
 
 func NewRegistrationHandlers(
 	machineKey key.MachinePublic,
 	config *config.Config,
 	sessionManager core.PollMapSessionManager,
-	repository domain.Repository) *RegistrationHandlers {
+	repository domain.Repository,
+) *RegistrationHandlers {
 	return &RegistrationHandlers{
 		machineKey:     machineKey,
 		sessionManager: sessionManager,
@@ -55,7 +57,6 @@ func (h *RegistrationHandlers) Register(c echo.Context) error {
 
 	var m *domain.Machine
 	m, err := h.repository.GetMachineByKeys(ctx, machineKey, nodeKey)
-
 	if err != nil {
 		return logError(err)
 	}
@@ -84,8 +85,14 @@ func (h *RegistrationHandlers) Register(c echo.Context) error {
 			response := tailcfg.RegisterResponse{NodeKeyExpired: true}
 			return c.JSON(http.StatusOK, response)
 		}
+
 		if m.AutoGenerateName {
-			sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+			var sanitizeHostname string
+			if req.Hostinfo.Hostname == "localhost" && req.Hostinfo.DeviceModel != "" {
+				sanitizeHostname = dnsname.SanitizeHostname(req.Hostinfo.DeviceModel)
+			} else {
+				sanitizeHostname = dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+			}
 			if m.Name != sanitizeHostname {
 				nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, m.TailnetID, sanitizeHostname)
 				if err != nil {
@@ -186,7 +193,12 @@ func (h *RegistrationHandlers) authenticateMachineWithAuthKey(c echo.Context, ma
 	now := time.Now().UTC()
 
 	if m == nil {
-		sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+		var sanitizeHostname string
+		if req.Hostinfo.Hostname == "localhost" && req.Hostinfo.DeviceModel != "" {
+			sanitizeHostname = dnsname.SanitizeHostname(req.Hostinfo.DeviceModel)
+		} else {
+			sanitizeHostname = dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+		}
 		nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, tailnet.ID, sanitizeHostname)
 		if err != nil {
 			return logError(err)
@@ -226,7 +238,12 @@ func (h *RegistrationHandlers) authenticateMachineWithAuthKey(c echo.Context, ma
 		m.IPv6 = domain.IP{Addr: ipv6}
 	} else {
 		if m.AutoGenerateName {
-			sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+			var sanitizeHostname string
+			if req.Hostinfo.Hostname == "localhost" && req.Hostinfo.DeviceModel != "" {
+				sanitizeHostname = dnsname.SanitizeHostname(req.Hostinfo.DeviceModel)
+			} else {
+				sanitizeHostname = dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+			}
 			if m.Name != sanitizeHostname {
 				nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, tailnet.ID, sanitizeHostname)
 				if err != nil {

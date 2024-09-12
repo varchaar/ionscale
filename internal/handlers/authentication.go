@@ -4,15 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/jsiebens/ionscale/internal/addr"
 	"github.com/jsiebens/ionscale/internal/auth"
 	tpl "github.com/jsiebens/ionscale/internal/templates"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/mr-tron/base58"
 	"go.uber.org/zap"
-	"net/http"
 	"tailscale.com/tailcfg"
-	"time"
 
 	"github.com/jsiebens/ionscale/internal/config"
 	"github.com/jsiebens/ionscale/internal/domain"
@@ -25,8 +26,8 @@ func NewAuthenticationHandlers(
 	config *config.Config,
 	authProvider auth.Provider,
 	systemIAMPolicy *domain.IAMPolicy,
-	repository domain.Repository) *AuthenticationHandlers {
-
+	repository domain.Repository,
+) *AuthenticationHandlers {
 	return &AuthenticationHandlers{
 		config:          config,
 		authProvider:    authProvider,
@@ -401,8 +402,8 @@ func (h *AuthenticationHandlers) endMachineRegistrationFlow(c echo.Context, form
 	var tailnet *domain.Tailnet
 	var user *domain.User
 	var ephemeral bool
-	var tags = []string{}
-	var authorized = false
+	tags := []string{}
+	authorized := false
 
 	if form.AuthKey != "" {
 		authKey, err := h.repository.LoadAuthKey(ctx, form.AuthKey)
@@ -473,7 +474,12 @@ func (h *AuthenticationHandlers) endMachineRegistrationFlow(c echo.Context, form
 		advertisedTags := domain.SanitizeTags(req.Hostinfo.RequestTags)
 		tags := append(registeredTags, advertisedTags...)
 
-		sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+		var sanitizeHostname string
+		if req.Hostinfo.Hostname == "localhost" && req.Hostinfo.DeviceModel != "" {
+			sanitizeHostname = dnsname.SanitizeHostname(req.Hostinfo.DeviceModel)
+		} else {
+			sanitizeHostname = dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+		}
 		nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, tailnet.ID, sanitizeHostname)
 		if err != nil {
 			return logError(err)
@@ -513,7 +519,12 @@ func (h *AuthenticationHandlers) endMachineRegistrationFlow(c echo.Context, form
 		tags := append(registeredTags, advertisedTags...)
 
 		if m.AutoGenerateName {
-			sanitizeHostname := dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+			var sanitizeHostname string
+			if req.Hostinfo.Hostname == "localhost" && req.Hostinfo.DeviceModel != "" {
+				sanitizeHostname = dnsname.SanitizeHostname(req.Hostinfo.DeviceModel)
+			} else {
+				sanitizeHostname = dnsname.SanitizeHostname(req.Hostinfo.Hostname)
+			}
 			if m.Name != sanitizeHostname {
 				nameIdx, err := h.repository.GetNextMachineNameIndex(ctx, tailnet.ID, sanitizeHostname)
 				if err != nil {
@@ -554,7 +565,6 @@ func (h *AuthenticationHandlers) endMachineRegistrationFlow(c echo.Context, form
 
 		return nil
 	})
-
 	if err != nil {
 		return logError(err)
 	}
@@ -571,7 +581,7 @@ func (h *AuthenticationHandlers) isSystemAdmin(u *auth.User) (bool, error) {
 }
 
 func (h *AuthenticationHandlers) listAvailableTailnets(ctx context.Context, u *auth.User) ([]domain.Tailnet, error) {
-	var result = []domain.Tailnet{}
+	result := []domain.Tailnet{}
 	tailnets, err := h.repository.ListTailnets(ctx)
 	if err != nil {
 		return nil, err
@@ -616,7 +626,7 @@ func (h *AuthenticationHandlers) readState(s string) (*oauthState, error) {
 		return nil, err
 	}
 
-	var state = &oauthState{}
+	state := &oauthState{}
 	if err := json.Unmarshal(decodedState, state); err != nil {
 		return nil, err
 	}
