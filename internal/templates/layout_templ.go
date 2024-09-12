@@ -78,7 +78,7 @@ func Success() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div style=\"text-align: center\"><p><b>Authorization successful</b></p><small>You can now close this window</small></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div style=\"text-align: center\"><p><b>Authorization successful</b></p><small>You can now close this window (It will close automatically in 5s)</small><script>\n          setTimeout(() => {\n            window.close()\n          }, 5000);\n        </script></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
